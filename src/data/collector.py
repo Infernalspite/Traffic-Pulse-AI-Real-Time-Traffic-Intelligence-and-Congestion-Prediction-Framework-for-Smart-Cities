@@ -1,12 +1,26 @@
-import requests
-import pandas as pd
-from datetime import datetime
-import time
 import os
+import time
+from datetime import datetime, timezone
+from pathlib import Path
 
-API_KEY = "kDTaToysSfirkXV1oMpJde88xATAIgDn"
+import pandas as pd
+import requests
 
-junctions = {
+API_KEY = os.environ.get("TOMTOM_API_KEY")
+API_URL = os.environ.get(
+    "TOMTOM_FLOW_URL",
+    "https://api.tomtom.com/traffic/services/4/flowSegmentData/absolute/10/json",
+)
+OUTPUT_PATH = Path(
+    os.environ.get(
+        "TRAFFIC_OUTPUT_PATH",
+        Path(__file__).resolve().parents[2] / "data" / "raw" / "chennai_traffic_log.csv",
+    )
+)
+REQUEST_TIMEOUT_SECONDS = float(os.environ.get("TRAFFIC_REQUEST_TIMEOUT_SECONDS", "10"))
+REQUEST_PAUSE_SECONDS = float(os.environ.get("TRAFFIC_REQUEST_PAUSE_SECONDS", "0.5"))
+
+JUNCTIONS = {
     "Kathipara": (13.0107, 80.2016),
     "Guindy": (13.0067, 80.2206),
     "T_Nagar_Panagal": (13.0418, 80.2341),
@@ -29,35 +43,49 @@ junctions = {
     "Kelambakkam_OMR": (12.7925, 80.2183),
 }
 
-def fetch_traffic_data(junctions, api_key):
+
+def fetch_traffic_data(junctions: dict[str, tuple[float, float]], api_key: str) -> pd.DataFrame:
+    if not api_key:
+        raise RuntimeError("TOMTOM_API_KEY is required; set it in the environment, never in source code.")
+
+    timestamp = datetime.now(timezone.utc).isoformat()
     rows = []
-    timestamp = datetime.now().isoformat()
-    for name, (lat, lon) in junctions.items():
-        url = "https://api.tomtom.com/traffic/services/4/flowSegmentData/absolute/10/json"
-        params = {"point": f"{lat},{lon}", "key": api_key}
-        try:
-            response = requests.get(url, params=params, timeout=10)
-            data = response.json()["flowSegmentData"]
-            rows.append({
-                "timestamp": timestamp,
-                "junction": name,
-                "lat": lat,
-                "lon": lon,
-                "current_speed": data.get("currentSpeed"),
-                "free_flow_speed": data.get("freeFlowSpeed"),
-                "current_travel_time": data.get("currentTravelTime"),
-                "free_flow_travel_time": data.get("freeFlowTravelTime"),
-                "confidence": data.get("confidence"),
-                "road_closure": data.get("roadClosure"),
-            })
-        except Exception as e:
-            print(f"Failed for {name}: {e}")
-        time.sleep(0.5)
+    with requests.Session() as session:
+        for name, (lat, lon) in junctions.items():
+            try:
+                response = session.get(
+                    API_URL,
+                    params={"point": f"{lat},{lon}", "key": api_key},
+                    timeout=REQUEST_TIMEOUT_SECONDS,
+                )
+                response.raise_for_status()
+                segment = response.json().get("flowSegmentData", {})
+                rows.append({
+                    "timestamp": timestamp,
+                    "junction": name,
+                    "lat": lat,
+                    "lon": lon,
+                    "current_speed": segment.get("currentSpeed"),
+                    "free_flow_speed": segment.get("freeFlowSpeed"),
+                    "current_travel_time": segment.get("currentTravelTime"),
+                    "free_flow_travel_time": segment.get("freeFlowTravelTime"),
+                    "confidence": segment.get("confidence"),
+                    "road_closure": segment.get("roadClosure"),
+                })
+            except (requests.RequestException, ValueError, KeyError) as exc:
+                print(f"Failed for {name}: {exc}")
+            time.sleep(REQUEST_PAUSE_SECONDS)
     return pd.DataFrame(rows)
 
+
+def append_snapshot(df: pd.DataFrame, output_path: Path) -> None:
+    if df.empty:
+        print("No traffic rows collected; leaving output unchanged.")
+        return
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(output_path, mode="a", header=not output_path.exists(), index=False)
+    print(f"[{datetime.now(timezone.utc).isoformat()}] Saved {len(df)} rows to {output_path}.")
+
+
 if __name__ == "__main__":
-    output_path = os.path.join(os.path.dirname(__file__), "..", "..", "data", "raw", "chennai_traffic_log.csv")
-    df = fetch_traffic_data(junctions, API_KEY)
-    file_exists = os.path.exists(output_path)
-    df.to_csv(output_path, mode="a", header=not file_exists, index=False)
-    print(f"[{datetime.now()}] Saved {len(df)} rows.")
+    append_snapshot(fetch_traffic_data(JUNCTIONS, API_KEY), OUTPUT_PATH)
