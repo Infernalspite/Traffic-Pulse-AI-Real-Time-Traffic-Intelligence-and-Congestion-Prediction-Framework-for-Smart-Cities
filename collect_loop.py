@@ -1,14 +1,16 @@
+import os
 import subprocess
+import sys
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 
-interval = 15 * 60  # 15 minutes in seconds
+INTERVAL_SECONDS = int(os.environ.get("TRAFFIC_COLLECTION_INTERVAL_SECONDS", str(15 * 60)))
+COLLECTOR = os.path.join(os.path.dirname(__file__), "src", "data", "collector.py")
 
 print("Chennai Traffic Collector running — press Ctrl+C to stop")
-print("Run this only when plugged in!\n")
 
 while True:
-    print(f"[{datetime.now().strftime('%H:%M:%S')}] Collecting...")
-    subprocess.run(['python', 'src/data/collector.py'])
-    print(f"Done. Next collection in 15 minutes.\n")
-    time.sleep(interval)
+    print(f"[{datetime.now(timezone.utc).isoformat()}] Collecting...")
+    result = subprocess.run([sys.executable, COLLECTOR], check=False)
+    print(f"Collector exited with status {result.returncode}. Next collection in {INTERVAL_SECONDS} seconds.\n")
+    time.sleep(INTERVAL_SECONDS)
