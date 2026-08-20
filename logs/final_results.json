@@ -1,0 +1,262 @@
+{
+  "dataset_info": {
+    "total_rows": 3264,
+    "snapshots": 165,
+    "junctions": 20,
+    "date_range_start": "2026-07-10 21:43:48.458304",
+    "date_range_end": "2026-07-25 09:20:29.732710",
+    "train_snapshots": 132,
+    "test_snapshots": 33
+  },
+  "results_table": {
+    "Historical Average": {
+      "MAE": 3.57,
+      "RMSE": 6.26,
+      "MAPE": 11.81
+    },
+    "Last Value": {
+      "MAE": 4.31,
+      "RMSE": 7.08,
+      "MAPE": 15.68
+    },
+    "Linear Regression": {
+      "MAE": 9.52,
+      "RMSE": 29.85,
+      "MAPE": 21.85
+    },
+    "Random Forest": {
+      "MAE": 3.41,
+      "RMSE": 6.4,
+      "MAPE": 11.33
+    },
+    "MonsoonAwareSTGNN (Ours)": {
+      "MAE": 16.31,
+      "RMSE": 17.54,
+      "MAPE": 71.03
+    }
+  },
+  "training_curve": [
+    0.1689,
+    0.0426,
+    0.0396,
+    0.0709,
+    0.0637,
+    0.0424,
+    0.0278,
+    0.0263,
+    0.0321,
+    0.0383,
+    0.0403,
+    0.0361,
+    0.0304,
+    0.025,
+    0.0221,
+    0.0218,
+    0.0233,
+    0.0252,
+    0.026,
+    0.024,
+    0.0212,
+    0.0206,
+    0.0193,
+    0.0184,
+    0.0177,
+    0.0177,
+    0.0175,
+    0.0181,
+    0.0179,
+    0.0177,
+    0.018,
+    0.0173,
+    0.0168,
+    0.0164,
+    0.0159,
+    0.0157,
+    0.0156,
+    0.0154,
+    0.0159,
+    0.0161,
+    0.0158,
+    0.0154,
+    0.0151,
+    0.0149,
+    0.0148,
+    0.0145,
+    0.0149,
+    0.0146,
+    0.0147,
+    0.0147,
+    0.0144,
+    0.0146,
+    0.0145,
+    0.0145,
+    0.0144,
+    0.0143,
+    0.0143,
+    0.0138,
+    0.0139,
+    0.0142,
+    0.014,
+    0.0139,
+    0.0142,
+    0.0141,
+    0.0142,
+    0.0138,
+    0.0137,
+    0.0141,
+    0.014,
+    0.0137,
+    0.0141,
+    0.0144,
+    0.0137,
+    0.014,
+    0.0138,
+    0.0139,
+    0.0141,
+    0.0133,
+    0.0136,
+    0.0138,
+    0.0135,
+    0.0136,
+    0.0141,
+    0.0133,
+    0.0136,
+    0.0135,
+    0.0139,
+    0.0135,
+    0.0134,
+    0.0133,
+    0.0138,
+    0.0137,
+    0.0139,
+    0.0135,
+    0.0137,
+    0.0135,
+    0.0132,
+    0.0136,
+    0.0138,
+    0.0135
+  ],
+  "last_snapshot_comparison": [
+    {
+      "junction": "Kathipara",
+      "actual_kmh": 28.0,
+      "gnn_pred_kmh": 7.5,
+      "rf_pred_kmh": 24.3
+    },
+    {
+      "junction": "Velachery_Junction",
+      "actual_kmh": 27.0,
+      "gnn_pred_kmh": 5.5,
+      "rf_pred_kmh": 24.5
+    },
+    {
+      "junction": "Kelambakkam_OMR",
+      "actual_kmh": 43.0,
+      "gnn_pred_kmh": 17.1,
+      "rf_pred_kmh": 45.5
+    },
+    {
+      "junction": "Chromepet",
+      "actual_kmh": 38.0,
+      "gnn_pred_kmh": 6.0,
+      "rf_pred_kmh": 29.5
+    },
+    {
+      "junction": "Mylapore",
+      "actual_kmh": 15.0,
+      "gnn_pred_kmh": 6.6,
+      "rf_pred_kmh": 14.1
+    },
+    {
+      "junction": "Perambur",
+      "actual_kmh": 25.0,
+      "gnn_pred_kmh": 4.6,
+      "rf_pred_kmh": 21.4
+    },
+    {
+      "junction": "Thoraipakkam_OMR",
+      "actual_kmh": 20.0,
+      "gnn_pred_kmh": 4.7,
+      "rf_pred_kmh": 18.2
+    },
+    {
+      "junction": "Perungudi_OMR",
+      "actual_kmh": 24.0,
+      "gnn_pred_kmh": 5.3,
+      "rf_pred_kmh": 17.8
+    },
+    {
+      "junction": "Tambaram",
+      "actual_kmh": 28.0,
+      "gnn_pred_kmh": 4.7,
+      "rf_pred_kmh": 26.2
+    },
+    {
+      "junction": "Anna_Salai_Teynampet",
+      "actual_kmh": 26.0,
+      "gnn_pred_kmh": 6.6,
+      "rf_pred_kmh": 23.0
+    },
+    {
+      "junction": "Anna_Nagar_Roundtana",
+      "actual_kmh": 15.0,
+      "gnn_pred_kmh": 3.8,
+      "rf_pred_kmh": 10.4
+    },
+    {
+      "junction": "Ashok_Nagar",
+      "actual_kmh": 34.0,
+      "gnn_pred_kmh": 6.9,
+      "rf_pred_kmh": 31.1
+    },
+    {
+      "junction": "Adyar_Signal",
+      "actual_kmh": 22.0,
+      "gnn_pred_kmh": 6.5,
+      "rf_pred_kmh": 16.8
+    },
+    {
+      "junction": "T_Nagar_Panagal",
+      "actual_kmh": 32.0,
+      "gnn_pred_kmh": 6.9,
+      "rf_pred_kmh": 22.7
+    },
+    {
+      "junction": "Egmore",
+      "actual_kmh": 25.0,
+      "gnn_pred_kmh": 5.7,
+      "rf_pred_kmh": 18.7
+    },
+    {
+      "junction": "Guindy",
+      "actual_kmh": 28.0,
+      "gnn_pred_kmh": 6.9,
+      "rf_pred_kmh": 24.3
+    },
+    {
+      "junction": "Koyambedu",
+      "actual_kmh": 16.0,
+      "gnn_pred_kmh": 6.1,
+      "rf_pred_kmh": 17.4
+    },
+    {
+      "junction": "Vadapalani",
+      "actual_kmh": 25.0,
+      "gnn_pred_kmh": 5.2,
+      "rf_pred_kmh": 22.0
+    },
+    {
+      "junction": "Central_Station",
+      "actual_kmh": 26.0,
+      "gnn_pred_kmh": 4.6,
+      "rf_pred_kmh": 19.0
+    },
+    {
+      "junction": "Porur",
+      "actual_kmh": 19.0,
+      "gnn_pred_kmh": 4.2,
+      "rf_pred_kmh": 17.2
+    }
+  ]
+}
