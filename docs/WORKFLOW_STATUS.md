@@ -29,3 +29,8 @@ Audited against the attached Urban Traffic Flow Prediction — Complete Project 
 - Credentials are now read from TOMTOM_API_KEY; no secret belongs in source control.
 
 The next implementation milestone should build the deterministic preprocessing contract and baseline evaluation before adding the proposed model.
+
+
+## Combined-data retraining
+
+The optimized baseline was retrained from 26,514 deduplicated rows: 4,036 repository rows plus 22,478 Google Sheet rows. The final 20% of chronological data was held out. Random Forest metrics are recorded in logs/retrained_baseline_metrics.json. This is a traffic-speed baseline, not the proposed GNN, because the repository does not yet contain the proposed model source.
