@@ -1,0 +1,22 @@
+{
+  "dataset": {
+    "rows": 26514,
+    "usable_rows": 26434,
+    "junctions": 20,
+    "start": "2026-07-10T21:43:48.458304+00:00",
+    "end": "2026-08-20T14:06:45+00:00",
+    "repository_rows": 4036,
+    "google_sheet_rows": 22478,
+    "train_rows": 18514,
+    "validation_rows": 2640,
+    "test_rows": 5280,
+    "train_end": "2026-08-08T10:21:23+00:00",
+    "validation_end": "2026-08-13T15:38:50+00:00"
+  },
+  "features": ["current_speed", "free_flow_speed", "current_travel_time", "free_flow_travel_time", "confidence", "lat", "lon", "speed_lag_1", "speed_lag_2", "speed_lag_3", "speed_roll_3", "free_flow_ratio", "junction_code"],
+  "target": "next observed current_speed per junction",
+  "metrics": {
+    "last_value": {"MAE": 1.7341, "RMSE": 3.3453, "MAPE": 9.6856},
+    "random_forest_retrained": {"MAE": 1.6835, "RMSE": 2.6259, "MAPE": 9.1636}
+  }
+}
