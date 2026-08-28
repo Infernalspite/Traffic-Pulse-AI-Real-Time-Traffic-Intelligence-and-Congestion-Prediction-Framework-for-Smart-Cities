@@ -44,7 +44,7 @@ def to_feature_frame(frame:pd.DataFrame)->tuple[pd.DataFrame,list[str]]:
 def impute_features(frame:pd.DataFrame,adjacency:np.ndarray|None,config:TensorConfig)->pd.DataFrame:
     result=frame.copy().set_index(["timestamp","junction"]); junctions=list(result.index.get_level_values(1).unique()); numeric=[c for c in FEATURE_NAMES if c in result]
     for junction in junctions:
-        key=(slice(None),junction); part=result.loc[key,numeric].copy(); part.index=pd.DatetimeIndex(part.index.get_level_values(0)); part=part[~part.index.duplicated(keep="last")].sort_index(); part=part.interpolate(method="time",limit_area="inside",limit_direction="both")
+        key=(slice(None),junction); part=result.xs(junction,level="junction")[numeric].copy(); part=part[~part.index.duplicated(keep="last")].sort_index(); part=part.interpolate(method="time",limit_area="inside",limit_direction="both")
         result.loc[key,numeric]=part.to_numpy()
     if adjacency is not None:
         adjacency=np.asarray(adjacency,dtype=float); np.fill_diagonal(adjacency,0); adjacency=adjacency/(adjacency.sum(axis=1,keepdims=True)+1e-12)
@@ -61,11 +61,11 @@ def _split_dates(dates:pd.DatetimeIndex,config:TensorConfig)->tuple[pd.Timestamp
 def make_windows(frame:pd.DataFrame,config:TensorConfig,adjacency:np.ndarray|None=None)->dict:
     frame=impute_features(frame,adjacency,config); frame=frame.sort_values(["timestamp","junction"]); junctions=sorted(frame["junction"].unique()); timestamps=sorted(frame["timestamp"].unique()); train_end,validation_end=_split_dates(pd.DatetimeIndex(timestamps),config)
     by_time=frame.pivot(index="timestamp",columns="junction",values=FEATURE_NAMES).reindex(columns=pd.MultiIndex.from_product([FEATURE_NAMES,junctions])).sort_index()
-    values=by_time.to_numpy(dtype=float).reshape(len(by_time),len(FEATURE_NAMES),len(junctions)); values=np.nan_to_num(values,nan=0.0); xs=[]; ys=[]; dates=[]
+    values=by_time.to_numpy(dtype=float).reshape(len(by_time),len(FEATURE_NAMES),len(junctions)); values=np.nan_to_num(values,nan=0.0); train_rows=max(1,int(len(values)*config.train_fraction)); mean=values[:train_rows].mean(axis=(0,2),keepdims=True); scale=values[:train_rows].std(axis=(0,2),keepdims=True); scale=np.where(scale<1e-8,1.0,scale); values=(values-mean)/scale; xs=[]; ys=[]; dates=[]
     horizon=config.input_steps+config.forecast_steps
     for start in range(0,len(values)-horizon+1): xs.append(values[start:start+config.input_steps]); ys.append(values[start+config.input_steps:start+horizon,0,:,:]); dates.append(by_time.index[start+config.input_steps+config.forecast_steps-1])
     x=np.asarray(xs,dtype=np.float32); y=np.asarray(ys,dtype=np.float32); dates=pd.DatetimeIndex(dates); train=x[dates<train_end]; val=x[(dates>=train_end)&(dates<validation_end)]; test=x[dates>=validation_end]
-    return {"X_train":train,"X_val":val,"X_test":test,"y_train":y[dates<train_end],"y_val":y[(dates>=train_end)&(dates<validation_end)],"y_test":y[dates>=validation_end],"junctions":np.asarray(junctions),"feature_names":np.asarray(FEATURE_NAMES),"train_end":str(train_end),"validation_end":str(validation_end)}
+    return {"feature_mean":mean.astype(np.float32).reshape(-1),"feature_scale":scale.astype(np.float32).reshape(-1),"X_train":train,"X_val":val,"X_test":test,"y_train":y[dates<train_end],"y_val":y[(dates>=train_end)&(dates<validation_end)],"y_test":y[dates>=validation_end],"junctions":np.asarray(junctions),"feature_names":np.asarray(FEATURE_NAMES),"train_end":str(train_end),"validation_end":str(validation_end)}
 
 def save_windows(windows:dict,path:Path)->None:
     path.parent.mkdir(parents=True,exist_ok=True); np.savez_compressed(path,**windows); path.with_suffix(".json").write_text(json.dumps({k:(v.tolist() if isinstance(v,np.ndarray) and v.ndim==1 else v) for k,v in windows.items() if isinstance(v,(str,int,float,list)) or (isinstance(v,np.ndarray) and v.ndim==1)},indent=2))
