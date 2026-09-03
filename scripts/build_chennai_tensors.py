@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """Create train/validation/test traffic tensors from a CSV."""
 import argparse
+import sys
 from pathlib import Path
 import numpy as np
+
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from src.data.pipeline import TensorConfig, load_traffic, to_feature_frame, make_windows, save_windows
 
 def main():
