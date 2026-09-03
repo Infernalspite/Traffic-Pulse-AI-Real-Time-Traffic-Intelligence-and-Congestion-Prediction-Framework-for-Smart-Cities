@@ -1,31 +1,49 @@
 # Workflow alignment status
 
-Audited against the attached Urban Traffic Flow Prediction — Complete Project Workflow. Status is evidence-based: a checked item has a tracked implementation or artifact; an unchecked item is not claimed as complete.
+Audited against the attached Urban Traffic Flow Prediction — Complete Project
+Workflow. A component is marked implemented only when it has runnable code or
+an checked artifact in this repository.
 
-## Present in the repository
+## Implemented locally
 
-- Chennai traffic collection from TomTom for 20 configured junctions.
-- Open-Meteo weather merge in the notebook.
-- A 2026 Chennai festival seed CSV.
-- Chennai road graph artifacts and junction-to-OSM-node mapping.
-- Raw, weather-enriched, processed traffic CSVs and vehicle-count sample data.
-- Exploratory notebook and generated result visualizations.
-- Basic historical-average, last-value, linear-regression, random-forest, and experimental MonsoonAwareSTGNN result records.
+- TomTom collection for the configured Chennai junctions with explicit
+  `TOMTOM_API_KEY` handling.
+- Open-Meteo historical rainfall/visibility collector and an explicit CPCB JSON
+  adapter; provider URLs and credentials are never silently guessed.
+- 24-feature tensor contract, mixed timestamp handling, 5-minute regularization,
+  interpolation, train-only Z-score normalization, 12x12 windows, and
+  chronological 70/10/20 splitting.
+- Persistence and differenced ARIMA-style statistical baselines.
+- LSTM, STGCN, DCRNN, Graph WaveNet, AGCRN, adaptive graph, and India-aware
+  graph-temporal model implementations sharing one trainer contract.
+- India-stratified metrics, sensor dropout curves from 100% to 30%, checkpoint
+  metadata, ONNX export utility, and file-backed experiment registry.
+- Adaptive adjacency, vehicle-channel fusion, weather FiLM conditioning,
+  festival conditioning, temporal attention, and training-time sensor masking
+  in `src/models/proposed.py`.
+- Spectral graph alignment and 3/7/14-day few-shot slice utilities.
+- FastAPI `/status` and `/predict`, multilingual Streamlit shell, Docker Compose
+  services, local PostgreSQL service, tests, and GitHub Actions CI.
+- Imported spreadsheet retraining artifacts and a documented recommended LSTM
+  checkpoint under `docs/RETRAINING_20260903.md`.
 
-## Not yet implemented
+## Explicit external prerequisites
 
-- METR-LA / PeMS-BAY download and reproducible loaders.
-- IMD, CPCB AQI, Google Maps/TomTom continuous multi-source collection, and source attribution.
-- The required 24-feature tensor, India-specific imputation, train-only Z-score normalization, 12-step windows, and 70/10/20 chronological split.
-- ARIMA, LSTM-only, STGCN, DCRNN, Graph WaveNet, and AGCRN baselines with common evaluation.
-- The proposed heterogeneous vehicle graph, ConvLSTM/FiLM weather fusion, festival embedding, sparse sensor masking, scheduled sampling, and adaptive adjacency.
-- Transfer/meta-learning modules, full training strategy, stratified evaluation, ablations, and sensor-dropout robustness.
-- FastAPI predict/status endpoints, Streamlit multilingual XAI dashboard, Folium overlays, alerts, ONNX export, PostgreSQL logging, Docker Compose, experiment tracking, CI, and tests.
+- METR-LA and PeMS-BAY still require current download URLs and acceptance of
+  their source terms; `scripts/download_benchmarks.py` downloads operator-
+  supplied URLs without embedding stale links.
+- IMD, CPCB, Google Maps, and continuous TomTom collection require provider
+  access and credentials. The local workflow does not fabricate those records.
+- OSMnx graph construction requires a live Overpass/network request and a
+  selected city. Existing Chennai graph artifacts are preserved.
+- MLflow/W&B, SHAP/GNNExplainer, push notifications, and translation providers
+  are integration points; the core path runs offline without them.
+- A research paper and demo video are deliverables outside executable source
+  code and are not represented as completed claims.
 
-## Cleanup decisions
+## Reproducibility boundary
 
-- Removed duplicate collector checkpoint, notebook checkpoint/cache, and duplicate generated dashboard exports from the alignment branch only.
-- Preserved datasets, models, the primary notebook, main reports, road graph artifacts, and the collector.
-- Credentials are now read from TOMTOM_API_KEY; no secret belongs in source control.
-
-The next implementation milestone should build the deterministic preprocessing contract and baseline evaluation before adding the proposed model.
+The spreadsheet retraining is a valid Chennai speed-forecast experiment, but
+its export lacks weather, AQI, vehicle-count, and infrastructure observations.
+Those 24-feature positions use documented defaults, so monsoon- and
+vehicle-specific metrics remain unavailable until enriched data is supplied.
