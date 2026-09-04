@@ -1,0 +1,26 @@
+{
+  "model": "graph",
+  "device": "cpu",
+  "seed": 42,
+  "epochs_completed": 40,
+  "best_validation_mae_normalized": 0.19168452831846855,
+  "test_samples": 2165,
+  "checkpoint": "models/retrained_adaptive_graph_20260903.pt",
+  "metrics": {
+    "15min": {
+      "MAE": 1.4897785003521151,
+      "RMSE": 2.0867684940314555,
+      "MAPE": 7.800714059270902
+    },
+    "30min": {
+      "MAE": 1.562352422071109,
+      "RMSE": 2.2044698178161157,
+      "MAPE": 8.124635622000756
+    },
+    "60min": {
+      "MAE": 1.7336337427178927,
+      "RMSE": 2.458838303706504,
+      "MAPE": 8.900013407810118
+    }
+  }
+}
