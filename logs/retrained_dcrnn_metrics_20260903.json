@@ -1,0 +1,26 @@
+{
+  "model": "dcrnn",
+  "device": "cpu",
+  "seed": 42,
+  "epochs_completed": 5,
+  "best_validation_mae_normalized": 0.4962458372226162,
+  "test_samples": 2165,
+  "checkpoint": "models/retrained_dcrnn_20260903.pt",
+  "metrics": {
+    "15min": {
+      "MAE": 3.9661434856793623,
+      "RMSE": 5.681196644125184,
+      "MAPE": 19.107995635831
+    },
+    "30min": {
+      "MAE": 4.03132678890889,
+      "RMSE": 5.764132177654523,
+      "MAPE": 19.358741624582628
+    },
+    "60min": {
+      "MAE": 4.245421418901404,
+      "RMSE": 5.96956186990727,
+      "MAPE": 20.480583040341518
+    }
+  }
+}
