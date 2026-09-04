@@ -1,0 +1,26 @@
+{
+  "model": "arima",
+  "device": "cpu",
+  "seed": 42,
+  "epochs_completed": 0,
+  "best_validation_mae_normalized": null,
+  "test_samples": 2165,
+  "checkpoint": null,
+  "metrics": {
+    "15min": {
+      "MAE": 0.5129723701961597,
+      "RMSE": 1.0113091309521896,
+      "MAPE": 2.712111320447236
+    },
+    "30min": {
+      "MAE": 0.9266836004719723,
+      "RMSE": 1.7558909639083364,
+      "MAPE": 4.877539476594514
+    },
+    "60min": {
+      "MAE": 1.4927648214379854,
+      "RMSE": 2.6355302051793257,
+      "MAPE": 7.741264523193658
+    }
+  }
+}
