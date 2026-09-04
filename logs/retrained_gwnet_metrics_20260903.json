@@ -1,0 +1,26 @@
+{
+  "model": "gwnet",
+  "device": "cpu",
+  "seed": 42,
+  "epochs_completed": 5,
+  "best_validation_mae_normalized": 0.17512785729333855,
+  "test_samples": 2165,
+  "checkpoint": "models/retrained_gwnet_20260903.pt",
+  "metrics": {
+    "15min": {
+      "MAE": 1.0616993982742344,
+      "RMSE": 1.5222785346823844,
+      "MAPE": 5.333238015851293
+    },
+    "30min": {
+      "MAE": 1.3497526768999342,
+      "RMSE": 2.01709765883051,
+      "MAPE": 6.8547507125266405
+    },
+    "60min": {
+      "MAE": 1.78576568037478,
+      "RMSE": 2.701295768629585,
+      "MAPE": 9.037471149064544
+    }
+  }
+}
