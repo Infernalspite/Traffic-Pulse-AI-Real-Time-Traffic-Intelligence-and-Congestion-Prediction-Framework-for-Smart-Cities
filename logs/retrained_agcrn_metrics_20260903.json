@@ -1,0 +1,26 @@
+{
+  "model": "agcrn",
+  "device": "cpu",
+  "seed": 42,
+  "epochs_completed": 5,
+  "best_validation_mae_normalized": 0.30136088177988296,
+  "test_samples": 2165,
+  "checkpoint": "models/retrained_agcrn_20260903.pt",
+  "metrics": {
+    "15min": {
+      "MAE": 2.4755123449418064,
+      "RMSE": 3.522373719645844,
+      "MAPE": 10.92887033242713
+    },
+    "30min": {
+      "MAE": 2.491608562887954,
+      "RMSE": 3.529400107028225,
+      "MAPE": 11.092323556835543
+    },
+    "60min": {
+      "MAE": 2.5927786851314694,
+      "RMSE": 3.6474572077983707,
+      "MAPE": 11.58628163427053
+    }
+  }
+}
