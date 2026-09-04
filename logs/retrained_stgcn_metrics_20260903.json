@@ -1,0 +1,26 @@
+{
+  "model": "stgcn",
+  "device": "cpu",
+  "seed": 42,
+  "epochs_completed": 5,
+  "best_validation_mae_normalized": 0.548182443843764,
+  "test_samples": 2165,
+  "checkpoint": "models/retrained_stgcn_20260903.pt",
+  "metrics": {
+    "15min": {
+      "MAE": 4.336932201892068,
+      "RMSE": 6.213152293251641,
+      "MAPE": 20.40150657690562
+    },
+    "30min": {
+      "MAE": 4.387607553825643,
+      "RMSE": 6.257657928956192,
+      "MAPE": 20.64725097708112
+    },
+    "60min": {
+      "MAE": 4.524632823054289,
+      "RMSE": 6.381680921349631,
+      "MAPE": 21.436369413105673
+    }
+  }
+}
