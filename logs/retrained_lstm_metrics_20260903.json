@@ -1,0 +1,26 @@
+{
+  "model": "lstm",
+  "device": "cpu",
+  "seed": 42,
+  "epochs_completed": 40,
+  "best_validation_mae_normalized": 0.14499978938536412,
+  "test_samples": 2165,
+  "checkpoint": "models/retrained_lstm_20260903.pt",
+  "metrics": {
+    "15min": {
+      "MAE": 1.1943439619976157,
+      "RMSE": 1.973237432400139,
+      "MAPE": 6.479488694378575
+    },
+    "30min": {
+      "MAE": 1.2154284579649257,
+      "RMSE": 1.9941934724822608,
+      "MAPE": 6.58887830484505
+    },
+    "60min": {
+      "MAE": 1.2531153264827597,
+      "RMSE": 2.04425502899492,
+      "MAPE": 6.79458240620125
+    }
+  }
+}
