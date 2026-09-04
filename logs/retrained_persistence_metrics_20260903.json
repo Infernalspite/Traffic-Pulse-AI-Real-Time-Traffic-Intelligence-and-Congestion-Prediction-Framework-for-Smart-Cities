@@ -1,0 +1,26 @@
+{
+  "model": "persistence",
+  "device": "cpu",
+  "seed": 42,
+  "epochs_completed": 0,
+  "best_validation_mae_normalized": null,
+  "test_samples": 2165,
+  "checkpoint": null,
+  "metrics": {
+    "15min": {
+      "MAE": 0.5127859569091444,
+      "RMSE": 1.0113069064447602,
+      "MAPE": 2.711320457392069
+    },
+    "30min": {
+      "MAE": 0.9263510211345505,
+      "RMSE": 1.7558859825530815,
+      "MAPE": 4.876099518567445
+    },
+    "60min": {
+      "MAE": 1.4921802335303045,
+      "RMSE": 2.63551651604677,
+      "MAPE": 7.738628336336083
+    }
+  }
+}
