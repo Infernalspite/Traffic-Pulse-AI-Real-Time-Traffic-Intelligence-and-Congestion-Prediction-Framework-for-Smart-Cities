@@ -1,0 +1,9 @@
+# Local exports and generated training artifacts
+exports/
+*.joblib
+*.pkl
+.env
+.pythonlibs/
+__pycache__/
+.ipynb_checkpoints/
+notebooks/cache/
