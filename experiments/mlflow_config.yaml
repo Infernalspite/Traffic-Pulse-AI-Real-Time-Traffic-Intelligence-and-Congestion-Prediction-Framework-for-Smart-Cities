@@ -1,0 +1,37 @@
+﻿# MLflow / W&B Experiment Tracking Configuration for Traffic Pulse AI
+experiment_name: "Traffic-Pulse-AI-India-Urban-Forecasting"
+tracking_uri: "sqlite:///experiments/mlflow.db"
+artifact_location: "./experiments/artifacts"
+
+run_tags:
+  project: "Traffic-Pulse-AI"
+  city: "Chennai"
+  sensor_count: 20
+  features: 24
+  framework: "PyTorch"
+  innovations:
+    - "heterogeneous_vehicle_graph"
+    - "monsoon_weather_film_fusion"
+    - "festival_calendar_embedding"
+    - "sparse_sensor_imputation"
+    - "gnn_shap_xai"
+    - "maml_transfer_learning"
+
+hyperparameters:
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  scheduler: "CosineAnnealingWarmRestarts"
+  T_0: 50
+  batch_size: 64
+  epochs: 25
+  early_stopping_patience: 20
+  gradient_clip_max_norm: 5.0
+  input_steps: 12
+  forecast_steps: 12
+  step_minutes: 5
+
+metrics:
+  horizons_minutes: [15, 30, 60]
+  evaluated_metrics: ["MAE", "RMSE", "MAPE"]
+  strata: ["dry", "light_rain", "heavy_rain", "waterlogging", "normal_day", "festival_eve", "festival_day"]
+  sensor_availability_curve: [1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3]
