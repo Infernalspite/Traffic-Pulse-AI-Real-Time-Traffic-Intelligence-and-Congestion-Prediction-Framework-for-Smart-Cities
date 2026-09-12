@@ -4,7 +4,7 @@ from __future__ import annotations
 import folium
 from folium import plugins
 
-# Default coordinates for Chennai metropolitan junctions
+# Coordinates for 20 Chennai metropolitan junctions
 DEFAULT_JUNCTION_COORDS = {
     "Kathipara": (13.0107, 80.2016),
     "Guindy": (13.0067, 80.2206),
@@ -30,37 +30,27 @@ DEFAULT_JUNCTION_COORDS = {
 
 
 def get_congestion_color(capacity_pct: float) -> str:
-    """Return color code: green (<50%), yellow (50-79%), red (>=80%)."""
+    """Return color code: green (<50%), amber (50-79%), red (>=80%)."""
     if capacity_pct >= 80:
-        return "#e63946"  # Red / Severe Congestion
+        return "#e63946"  # Red / Severe Congestion Gridlock
     if capacity_pct >= 50:
-        return "#f4a261"  # Yellow-Amber / Moderate Delay
-    return "#2a9d8f"      # Green / Free Flow
+        return "#f4a261"  # Amber / Moderate Delay
+    return "#2a9d8f"      # Emerald Green / Free Flow
 
 
 def build_traffic_folium_map(
     junction_predictions: dict[str, dict],
-    center_lat: float = 13.03,
-    center_lon: float = 80.22,
+    center_lat: float = 13.025,
+    center_lon: float = 80.215,
     zoom_start: int = 11,
 ) -> folium.Map:
     """
-    Constructs Folium map with color-coded nodes and diagnosis popups.
-    junction_predictions format:
-        {
-            "JunctionName": {
-                "speed": float,
-                "free_flow": float,
-                "capacity_pct": float,
-                "explanation": str,
-                "alert": bool
-            }
-        }
+    Constructs Folium map with color-coded nodes, ripple alerts, and diagnosis popups.
     """
     m = folium.Map(
         location=[center_lat, center_lon],
         zoom_start=zoom_start,
-        tiles="CartoDB positron",
+        tiles="OpenStreetMap",
     )
 
     for name, coords in DEFAULT_JUNCTION_COORDS.items():
@@ -70,32 +60,50 @@ def build_traffic_folium_map(
         )
         cap = data.get("capacity_pct", 20.0)
         speed = data.get("speed", 25.0)
+        ff = data.get("free_flow", 35.0)
         color = get_congestion_color(cap)
         explanation = data.get("explanation", "Normal conditions")
         is_alert = data.get("alert", cap >= 80)
 
-        alert_badge = "<span style='color:red; font-weight:bold;'>⚠️ ALERT: &gt;80% Capacity Threshold Exceeded</span><br/>" if is_alert else ""
+        alert_badge = "<div style='background:#ffdddd; border:1px solid #ff4d4f; padding:4px 8px; border-radius:4px; color:#cf1322; font-weight:bold; margin-bottom:6px;'>🚨 ALERT: &gt;80% Capacity Threshold Exceeded</div>" if is_alert else ""
 
         popup_html = f"""
-        <div style='width:240px; font-family:sans-serif;'>
-            <h4 style='margin:0 0 5px 0;'>{name.replace('_', ' ')}</h4>
+        <div style='width:250px; font-family:-apple-system,BlinkMacSystemFont,sans-serif; font-size:13px;'>
+            <h4 style='margin:0 0 6px 0; color:#1f2937;'>{name.replace('_', ' ')}</h4>
             {alert_badge}
-            <b>Predicted Speed:</b> {speed:.1f} km/h<br/>
-            <b>Congestion Level:</b> <span style='color:{color}; font-weight:bold;'>{cap:.0f}%</span><br/>
-            <hr style='margin:6px 0;'/>
-            <p style='font-size:12px; margin:0; color:#333;'><b>Diagnostic Cause:</b> {explanation}</p>
+            <table style='width:100%; border-collapse:collapse; margin-bottom:6px;'>
+                <tr><td><b>Predicted Speed:</b></td><td style='text-align:right;'>{speed:.1f} km/h</td></tr>
+                <tr><td><b>Free-Flow Speed:</b></td><td style='text-align:right;'>{ff:.1f} km/h</td></tr>
+                <tr><td><b>Capacity Reached:</b></td><td style='text-align:right; color:{color}; font-weight:bold;'>{cap:.0f}%</td></tr>
+            </table>
+            <div style='background:#f3f4f6; padding:6px; border-radius:4px; font-size:11px; color:#4b5563;'>
+                <b>Diagnosis:</b> {explanation}
+            </div>
         </div>
         """
 
+        # Inner filled marker
         folium.CircleMarker(
             location=[coords[0], coords[1]],
-            radius=10 if not is_alert else 15,
-            color=color,
+            radius=11 if not is_alert else 16,
+            color="#ffffff",
+            weight=2,
             fill=True,
             fill_color=color,
-            fill_opacity=0.85,
-            popup=folium.Popup(popup_html, max_width=300),
+            fill_opacity=0.9,
+            popup=folium.Popup(popup_html, max_width=320),
             tooltip=f"{name.replace('_', ' ')}: {cap:.0f}% capacity ({speed:.1f} km/h)",
         ).add_to(m)
+
+        # Pulse circle for alert junctions
+        if is_alert:
+            folium.CircleMarker(
+                location=[coords[0], coords[1]],
+                radius=24,
+                color=color,
+                weight=1.5,
+                fill=False,
+                opacity=0.6,
+            ).add_to(m)
 
     return m
