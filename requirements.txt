@@ -24,7 +24,7 @@ matplotlib>=3.7,<4
 seaborn>=0.13,<1
 
 # Experiment Tracking & XAI
-mlflow>=2.10,<3
+mlflow>=2.20
 shap>=0.45,<1
 
 # Testing & Notebooks
