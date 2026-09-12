@@ -11,12 +11,23 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+import sys
+
+# Ensure repository root is in sys.path when invoked via streamlit
+ROOT_DIR = Path(__file__).resolve().parents[1]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
 import numpy as np
 import streamlit as st
 import streamlit.components.v1 as components
 import torch
 
-from dashboard.map_utils import DEFAULT_JUNCTION_COORDS, build_traffic_folium_map, get_congestion_color
+try:
+    from dashboard.map_utils import DEFAULT_JUNCTION_COORDS, build_traffic_folium_map, get_congestion_color
+except ImportError:
+    from map_utils import DEFAULT_JUNCTION_COORDS, build_traffic_folium_map, get_congestion_color
+
 from src.explainability.gnn_explain import TrafficXAIExplainer
 from src.models.proposed import IndiaAwareTrafficModel
 from src.models.traffic_models import (
