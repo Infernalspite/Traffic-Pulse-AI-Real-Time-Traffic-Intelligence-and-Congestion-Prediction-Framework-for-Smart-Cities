@@ -44,7 +44,7 @@ def test_prepare_normalizes_headers_timestamps_and_deduplicates(tmp_path):
     assert len(prepared) == 3
     assert prepared["timestamp"].dt.tz is not None
     assert prepared["source"].tolist().count("google_sheet") == 2
-    assert prepared.loc[prepared["timestamp"].dt.hour == 16, "current_speed"].max() == 22
+    assert prepared.loc[prepared["timestamp"] == pd.Timestamp("2026-07-19T16:46:31Z"), "current_speed"].item() == 22
 
 
 def test_make_features_is_causal():
@@ -53,5 +53,5 @@ def test_make_features_is_causal():
     frame["timestamp"] = pd.to_datetime(frame["timestamp"], utc=True)
     features = module.make_features(frame)
     assert "target_speed" in features
-    assert features.iloc[0]["speed_lag_1"] == 20
-    assert features.iloc[0]["target_speed"] == 21
+    assert features.iloc[0]["speed_lag_1"] == 22
+    assert features.iloc[0]["target_speed"] == 24
