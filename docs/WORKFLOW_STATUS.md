@@ -33,4 +33,4 @@ The next implementation milestone should build the deterministic preprocessing c
 
 ## Combined-data retraining
 
-The optimized baseline was retrained from 26,514 deduplicated rows: 4,036 repository rows plus 22,478 Google Sheet rows. The final 20% of chronological data was held out. Random Forest metrics are recorded in logs/retrained_baseline_metrics.json. This is a traffic-speed baseline, not the proposed GNN, because the repository does not yet contain the proposed model source.
+The optimized baseline was retrained from 25,974 unique rows after timestamp normalization and deduplication: 3,496 unique repository contributions plus 22,478 Google Sheet rows (540 overlaps removed). The final 20% of chronological data was held out. Random Forest metrics are recorded in logs/retrained_baseline_metrics.json. This is a traffic-speed baseline, not the proposed GNN, because the repository does not yet contain the proposed model source.
