@@ -1,4 +1,4 @@
-﻿"""Interactive Multilingual Traffic Intelligence & XAI Dashboard.
+"""Interactive Multilingual Traffic Intelligence & XAI Dashboard.
 
 Features:
 - Language toggle: English, Hindi, Kannada, Tamil, Marathi
@@ -48,9 +48,9 @@ selected_lang_name = st.sidebar.selectbox("🌐 Language / भाषा / மொ
 lang_code = LANGUAGES[selected_lang_name]
 trans_file = TRANS_DIR / f"{lang_code}.json"
 if trans_file.exists():
-    t = json.loads(trans_file.read_text(encoding="utf-8"))
+    t = json.loads(trans_file.read_text(encoding="utf-8-sig"))
 else:
-    t = json.loads((TRANS_DIR / "en.json").read_text(encoding="utf-8"))
+    t = json.loads((TRANS_DIR / "en.json").read_text(encoding="utf-8-sig"))
 
 st.title(f"🚦 {t['title']}")
 st.caption(f"{t['subtitle']} • *{t['retrained_note']}*")
