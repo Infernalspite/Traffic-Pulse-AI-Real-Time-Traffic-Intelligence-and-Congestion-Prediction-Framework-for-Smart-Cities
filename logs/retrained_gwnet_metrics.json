@@ -1,0 +1,26 @@
+{
+  "model": "gwnet",
+  "device": "cuda",
+  "seed": 42,
+  "epochs_completed": 25,
+  "best_validation_mae_normalized": 0.15118552145865485,
+  "test_samples": 2165,
+  "checkpoint": "models\\retrained_gwnet_latest.pt",
+  "metrics": {
+    "15min": {
+      "MAE": 0.9294038123071331,
+      "RMSE": 1.3909739674976593,
+      "MAPE": 4.698301213956659
+    },
+    "30min": {
+      "MAE": 1.2029186489069985,
+      "RMSE": 1.8840341185054024,
+      "MAPE": 6.115809152217623
+    },
+    "60min": {
+      "MAE": 1.6088970932509001,
+      "RMSE": 2.525613263445592,
+      "MAPE": 8.13415821336588
+    }
+  }
+}

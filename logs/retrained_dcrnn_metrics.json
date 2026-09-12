@@ -1,0 +1,26 @@
+{
+  "model": "dcrnn",
+  "device": "cuda",
+  "seed": 42,
+  "epochs_completed": 25,
+  "best_validation_mae_normalized": 0.1901288439527443,
+  "test_samples": 2165,
+  "checkpoint": "models\\retrained_dcrnn_latest.pt",
+  "metrics": {
+    "15min": {
+      "MAE": 1.4421442843915133,
+      "RMSE": 2.045930604981365,
+      "MAPE": 7.3534304564716075
+    },
+    "30min": {
+      "MAE": 1.5613101695591527,
+      "RMSE": 2.2333229316191447,
+      "MAPE": 7.929290480651274
+    },
+    "60min": {
+      "MAE": 1.776506913781992,
+      "RMSE": 2.5473068888867694,
+      "MAPE": 9.001501042962497
+    }
+  }
+}

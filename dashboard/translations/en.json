@@ -1,0 +1,21 @@
+﻿{
+  "title": "Traffic Pulse AI — Urban Congestion Intelligence",
+  "subtitle": "Real-time Spatio-Temporal GNN & Explainable Traffic Dashboard",
+  "language_label": "Select Language",
+  "model_status": "Model Pipeline Status",
+  "active_model": "Active Checkpoint",
+  "forecast_horizon": "Forecast Horizon (Minutes)",
+  "overview_metrics": "Key Metropolitan Corridors",
+  "map_header": "Metropolitan Corridors & Congestion Heatmap",
+  "alerts_header": "High-Priority Congestion Alerts (>80% Capacity)",
+  "no_alerts": "All monitored corridors operating within standard thresholds.",
+  "xai_header": "GNN & SHAP Attribution Diagnosis",
+  "select_junction": "Select Junction to Inspect",
+  "predicted_speed": "Predicted Flow Speed",
+  "capacity_reached": "Corridor Capacity Saturation",
+  "primary_cause": "Primary Algorithmic Cause",
+  "weather_monsoon": "Monsoon Rainfall & Waterlogging Signal",
+  "festival_impact": "Active Festival & Event Calibration",
+  "vehicle_mix": "Heterogeneous Modal Vehicle Distribution",
+  "retrained_note": "Model retrained on latest Google Sheets TomTom Chennai dataset."
+}

@@ -1,0 +1,26 @@
+{
+  "model": "agcrn",
+  "device": "cuda",
+  "seed": 42,
+  "epochs_completed": 25,
+  "best_validation_mae_normalized": 0.14130967697223248,
+  "test_samples": 2165,
+  "checkpoint": "models\\retrained_agcrn_latest.pt",
+  "metrics": {
+    "15min": {
+      "MAE": 0.9510097127037841,
+      "RMSE": 1.4267660414621606,
+      "MAPE": 5.167911090149649
+    },
+    "30min": {
+      "MAE": 1.1563881578071014,
+      "RMSE": 1.8057523476828534,
+      "MAPE": 6.241217821357277
+    },
+    "60min": {
+      "MAE": 1.448097255830126,
+      "RMSE": 2.286660900084882,
+      "MAPE": 7.76429283670461
+    }
+  }
+}

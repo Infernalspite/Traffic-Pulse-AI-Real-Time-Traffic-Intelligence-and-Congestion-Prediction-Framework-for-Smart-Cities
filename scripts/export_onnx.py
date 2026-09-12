@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-"""Export a trained neural checkpoint for cross-platform inference."""
+﻿#!/usr/bin/env python3
+"""Export a trained neural checkpoint for cross-platform inference via ONNX."""
 from __future__ import annotations
 
 import argparse
@@ -9,7 +9,15 @@ import sys
 import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from src.models.traffic_models import AGCRN, DCRNN, GraphWaveNet, STGCN, AdaptiveGraphTemporal, LSTMOnly
+from src.models.proposed import IndiaAwareTrafficModel
+from src.models.traffic_models import (
+    AGCRN,
+    AdaptiveGraphTemporal,
+    DCRNN,
+    GraphWaveNet,
+    LSTMOnly,
+    STGCN,
+)
 
 
 def main() -> None:
@@ -18,14 +26,26 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     checkpoint = torch.load(args.checkpoint, map_location="cpu", weights_only=False)
-    classes = {"lstm": LSTMOnly, "stgcn": STGCN, "dcrnn": DCRNN, "gwnet": GraphWaveNet, "agcrn": AGCRN, "graph": AdaptiveGraphTemporal}
+    classes = {
+        "lstm": LSTMOnly,
+        "stgcn": STGCN,
+        "dcrnn": DCRNN,
+        "gwnet": GraphWaveNet,
+        "agcrn": AGCRN,
+        "graph": AdaptiveGraphTemporal,
+        "india_aware": IndiaAwareTrafficModel,
+    }
     model = classes[checkpoint["model"]](checkpoint["features"], checkpoint["nodes"], checkpoint["horizon"])
     model.load_state_dict(checkpoint["state_dict"])
     model.eval()
     example = torch.zeros(1, 12, checkpoint["features"], checkpoint["nodes"])
     args.output.parent.mkdir(parents=True, exist_ok=True)
     torch.onnx.export(
-        model, example, args.output, input_names=["traffic_window"], output_names=["forecast"],
+        model,
+        example,
+        args.output,
+        input_names=["traffic_window"],
+        output_names=["forecast"],
         dynamic_axes={"traffic_window": {0: "batch"}, "forecast": {0: "batch"}},
         opset_version=17,
     )

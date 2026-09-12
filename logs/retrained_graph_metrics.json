@@ -1,0 +1,26 @@
+{
+  "model": "graph",
+  "device": "cuda",
+  "seed": 42,
+  "epochs_completed": 25,
+  "best_validation_mae_normalized": 0.17633200250394016,
+  "test_samples": 2165,
+  "checkpoint": "models\\retrained_graph_latest.pt",
+  "metrics": {
+    "15min": {
+      "MAE": 1.3104158897267753,
+      "RMSE": 1.8352372844012763,
+      "MAPE": 6.908254432865532
+    },
+    "30min": {
+      "MAE": 1.4297703549603116,
+      "RMSE": 2.0303882528299044,
+      "MAPE": 7.456053457134599
+    },
+    "60min": {
+      "MAE": 1.6699240048432735,
+      "RMSE": 2.4085971350433235,
+      "MAPE": 8.62763848286314
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "model": "india_aware",
+  "device": "cuda",
+  "seed": 42,
+  "epochs_completed": 25,
+  "best_validation_mae_normalized": 0.1491274166360346,
+  "test_samples": 2165,
+  "checkpoint": "models\\retrained_india_aware_latest.pt",
+  "metrics": {
+    "15min": {
+      "MAE": 1.2312815165795024,
+      "RMSE": 1.9900511170773165,
+      "MAPE": 6.592530016931773
+    },
+    "30min": {
+      "MAE": 1.2328994493066026,
+      "RMSE": 1.9989352906773106,
+      "MAPE": 6.6270066423361005
+    },
+    "60min": {
+      "MAE": 1.3044920925950894,
+      "RMSE": 2.085945286359124,
+      "MAPE": 6.981515942549834
+    }
+  }
+}

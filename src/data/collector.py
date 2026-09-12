@@ -1,3 +1,7 @@
+﻿"""Real-time traffic flow collector with single-shot and continuous loop daemon modes."""
+from __future__ import annotations
+
+import argparse
 import os
 import time
 from datetime import datetime, timezone
@@ -87,5 +91,22 @@ def append_snapshot(df: pd.DataFrame, output_path: Path) -> None:
     print(f"[{datetime.now(timezone.utc).isoformat()}] Saved {len(df)} rows to {output_path}.")
 
 
+def run_collection_cycle(loop: bool = False, interval_minutes: int = 5) -> None:
+    print(f"Starting traffic collection (loop={loop}, interval={interval_minutes}m)...")
+    while True:
+        try:
+            append_snapshot(fetch_traffic_data(JUNCTIONS, API_KEY), OUTPUT_PATH)
+        except Exception as exc:
+            print(f"Collection cycle error: {exc}")
+        if not loop:
+            break
+        time.sleep(interval_minutes * 60)
+
+
 if __name__ == "__main__":
-    append_snapshot(fetch_traffic_data(JUNCTIONS, API_KEY), OUTPUT_PATH)
+    parser = argparse.ArgumentParser(description="Collect metropolitan junction traffic snapshots")
+    parser.add_argument("--loop", action="store_true", help="Run continuous collection loop in background")
+    parser.add_argument("--interval", type=int, default=5, help="Collection interval in minutes (default: 5)")
+    args = parser.parse_args()
+
+    run_collection_cycle(loop=args.loop, interval_minutes=args.interval)
