@@ -1,4 +1,4 @@
-﻿"""FastAPI REST service for 15, 30, and 60-minute urban traffic flow forecasts."""
+"""FastAPI REST service for 15, 30, and 60-minute urban traffic flow forecasts."""
 from __future__ import annotations
 
 import os
@@ -87,6 +87,18 @@ def _load_model():
     _model.eval()
     _metadata = ckpt
     return _model
+
+
+@app.get("/")
+def root():
+    """Root endpoint providing service information and links to interactive docs."""
+    return {
+        "title": "Traffic Pulse AI — Intelligence & Congestion API",
+        "docs_url": "/docs",
+        "status_url": "/status",
+        "predict_endpoint": "POST /predict",
+        "description": "Visit /docs for interactive Swagger UI documentation and testing.",
+    }
 
 
 @app.get("/status")
