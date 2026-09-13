@@ -1,8 +1,144 @@
-﻿# 🎬 Traffic Pulse AI — Comprehensive Video Presentation Script
+# 🎬 Traffic Pulse AI — 5-Minute Video Script
 
-**Target Duration:** ~8–10 Minutes  
-**Tone:** Professional, engaging, authoritative, and developer/data-scientist friendly  
-**Audience:** Recruiters, researchers, hackathon judges, municipal smart city engineers, and ML enthusiasts  
+**Target Duration:** ~5 Minutes (~750 words at 150 wpm)  
+**Tone:** Professional, engaging, developer/recruiter-friendly  
+**Audience:** Recruiters, hackathon judges, smart city engineers, ML enthusiasts
+
+---
+
+## ⏱️ Timeline at a Glance
+
+| Timestamp | Section |
+|:---|:---|
+| **0:00 – 0:35** | 1. The Problem |
+| **0:35 – 1:35** | 2. The 6 Innovations |
+| **1:35 – 2:20** | 3. Meta-Ensemble & Uncertainty |
+| **2:20 – 2:50** | 4. Dataset & Benchmarks |
+| **2:50 – 4:15** | 5. Live Dashboard Walkthrough |
+| **4:15 – 4:45** | 6. REST API & Deployment |
+| **4:45 – 5:00** | 7. Outro |
+
+---
+
+## SECTION 1 — The Problem (0:00 – 0:35)
+
+**[VISUAL]:** Split screen — clean Los Angeles freeway on the left vs. Chennai's Kathipara Junction during monsoon rain on the right.
+
+**[NARRATION]:**
+"State-of-the-art traffic AI is broken for the Global South.
+
+Every benchmark paper — METR-LA, PeMS-BAY — was designed for predictable, car-dominated American highways with dense sensors and dry weather.
+
+Put those same models on the streets of Chennai or Bengaluru: they fail. Indian traffic is **heterogeneous** — 45% two-wheelers weaving through gridlock. Roads lose a third of capacity during tropical **monsoons**. A calendar of **50+ festivals** causes overnight surge events. And city sensors drop offline constantly.
+
+Welcome to **Traffic Pulse AI** — a real-time, explainable, multimodal traffic intelligence framework built specifically for Indian smart cities."
+
+---
+
+## SECTION 2 — The 6 Innovations (0:35 – 1:35)
+
+**[VISUAL]:** Architecture diagram — 24-feature tensor flowing into the 6 innovation modules.
+
+**[NARRATION]:**
+"The framework is built around a **24-parameter spatio-temporal tensor** across 12 time steps and 20 arterial junctions.
+
+It has **six core innovations**:
+
+**One — Heterogeneous Vehicle Graphs:** Instead of one road network, we build three sub-graphs — one for two-wheelers, one for heavy transit buses, one for cars — each with independent message passing before fusion.
+
+**Two — Monsoon FiLM Encoder:** A ConvLSTM ingests real-time rainfall and waterlogging depth, and dynamically modulates the neural hidden states using Feature-wise Linear Modulation.
+
+**Three — Festival Calendar Embedding:** A 49-event Indian festival calendar — Diwali, Pongal, Eid, bandhs — encoded as a 4D tensor with a hard-attention surge gate.
+
+**Four — MAML Transfer Learning:** Pre-trains on international data, then adapts to a new tier-2 Indian city with just three to fourteen days of local data.
+
+**Five — Explainable AI Engine:** Gradient saliency attribution tells traffic controllers *why* a corridor is failing — not just that it is.
+
+**Six — Sparse Sensor Imputer:** Trained with up to 40% random sensor dropout, keeping the system resilient when cameras go offline."
+
+---
+
+## SECTION 3 — The Meta-Ensemble (1:35 – 2:20)
+
+**[VISUAL]:** 7 parallel neural network streams merging into a Bayesian weighting block, outputting a confidence band curve.
+
+**[NARRATION]:**
+"No single model is best under all conditions. So we built the **TrafficPulse Meta-Ensemble** — seven architectures running in parallel: Graph WaveNet, our India-Aware model, AGCRN, LSTM, STGCN, DCRNN, and Adaptive GNN.
+
+Rather than averaging their outputs, we use **Bayesian inverse-variance consensus** — each model weighted by its held-out precision, adjusted dynamically by situation.
+
+Under normal conditions, Graph WaveNet and AGCRN lead. But the moment monsoon rain exceeds 20 mm/hr or a festival surge is detected, our India-Aware model automatically scales up to **29% of the ensemble weight** — because it's specifically parameterized for those conditions.
+
+The ensemble also outputs an **epistemic uncertainty score and 95% Confidence Interval** for every prediction, giving operators a trust signal alongside the forecast."
+
+---
+
+## SECTION 4 — Dataset & Benchmarks (2:20 – 2:50)
+
+**[VISUAL]:** Terminal training logs on an RTX 3050 + benchmark comparison table.
+
+**[NARRATION]:**
+"We collected **26,718 real-world snapshots** from 20 Chennai arterial junctions — from Kathipara and Guindy to the OMR IT Expressway — and retrained all models on a local **NVIDIA RTX 3050 GPU** using PyTorch, AdamW, and Cosine Annealing schedules.
+
+On the held-out 15-minute forecast test:
+- Graph WaveNet: **0.929 MAE, 4.70% MAPE**
+- AGCRN: **0.951 MAE**
+- Our **Meta-Ensemble: 0.884 MAE, 4.41% MAPE** — best across the board.
+
+Under 50% sensor dropout simulation, the sparse imputer kept error below **1.76 km/h**."
+
+---
+
+## SECTION 5 — Live Dashboard Walkthrough (2:50 – 4:15)
+
+**[VISUAL]:** Screen recording of the Streamlit dashboard running in browser.
+
+**[NARRATION]:**
+"Here's the live operational dashboard.
+
+First, **accessibility**: the sidebar language switcher flips the entire interface between English, Hindi, Kannada, Tamil, and Marathi — all 91 UI keys localize instantly.
+
+**Tab 1** is the interactive map — 20 Chennai junctions color-coded in real-time. Green for free-flow, amber for delays, pulsing red when capacity hits 80%. When a critical threshold is crossed, an emergency alert fires recommending immediate signal timing changes.
+
+Now watch the **Scenario Simulation sliders**: I'll set monsoon rain to 35 mm/hr, waterlogging to Moderate, enable Pre-Festival Rush, and push two-wheeler share to 55%. Instantly the Meta-Ensemble re-runs all 24 parameters — velocities drop, bottleneck alerts fire across OMR and Central Station.
+
+**Tab 2**, the Consensus Explorer, shows how all 7 models voted on each junction and their agreement confidence.
+
+**Tab 3** shows the 60-minute speed trajectory with upper and lower confidence bounds.
+
+And **Tab 5** is the XAI tab — a feature attribution chart showing exactly how much each factor — rain, festival, vehicle friction, upstream spillover — contributed to the predicted delay."
+
+---
+
+## SECTION 6 — API & Deployment (4:15 – 4:45)
+
+**[VISUAL]:** FastAPI Swagger UI at `/docs`, curl command output, Docker Compose file.
+
+**[NARRATION]:**
+"Beyond the dashboard, Traffic Pulse AI runs as a production REST service.
+
+The **FastAPI backend** serves predictions in under 50 milliseconds. `POST /predict` accepts current junction speeds and weather readings — or raw tensor windows — and returns per-junction consensus speeds with uncertainty bounds. `GET /status` reports which models and checkpoints are active.
+
+The full stack — API, Streamlit frontend, and PostgreSQL — is containerized with **Docker Compose**: one command to deploy. Models are also exported to **ONNX** for edge deployment."
+
+---
+
+## SECTION 7 — Outro (4:45 – 5:00)
+
+**[VISUAL]:** GitHub repository page with commit history and green test checks.
+
+**[NARRATION]:**
+"Traffic Pulse AI bridges the gap between GNN research and the real-world chaos of Indian smart cities — monsoons, festivals, mixed traffic, and all.
+
+All code, checkpoints, notebooks, and translation files are open-source on GitHub. Link in the description — give it a star, run the dashboard, and let me know what you think. Thanks for watching."
+
+---
+
+## 📋 Recording Tips
+1. **Resolution:** 1080p (1920×1080) or 4K.
+2. **Audio:** USB condenser mic with noise suppression.
+3. **Cursor:** Enable click highlights in OBS, Camtasia, or Loom.
+4. **Browser Zoom:** Set Streamlit to 100–110% so map and metric fonts are crisp.
 
 ---
 
