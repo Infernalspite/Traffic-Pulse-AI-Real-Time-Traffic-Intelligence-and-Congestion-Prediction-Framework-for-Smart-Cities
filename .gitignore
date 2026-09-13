@@ -1,0 +1,19 @@
+﻿# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Logs & temp
+*.log
+.coverage
+htmlcov/
