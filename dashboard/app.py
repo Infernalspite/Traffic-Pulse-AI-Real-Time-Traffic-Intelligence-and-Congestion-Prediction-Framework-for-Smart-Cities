@@ -1,13 +1,13 @@
-"""Interactive Multilingual Traffic Intelligence, Multi-Model Benchmarks & XAI Dashboard.
+﻿"""Interactive Multilingual Traffic Intelligence, Multi-Model Benchmarks & XAI Dashboard.
 
 Features:
-- Language toggle: English, Hindi, Kannada, Tamil, Marathi
+- Full multilingual UI localized in 5 Indian languages: English, Hindi, Kannada, Tamil, Marathi
 - Dynamic Folium OpenStreetMap overlay with real-time green/amber/red congestion coding
 - Push notification alerts triggered when any arterial junction exceeds 80% capacity
 - Scenario Simulator accounting for all Indian factors: Monsoon rainfall, waterlogging,
   festival eve rush, heterogeneous 2-wheeler mix, and road incident closures
 - Comprehensive 9-model comparison benchmarks (Persistence, ARIMA, LSTM, STGCN, DCRNN,
-  Graph WaveNet, AGCRN, Adaptive Graph, India-Aware Proposed)
+  Graph WaveNet, AGCRN, Adaptive Graph, India-Aware Proposed, Meta-Ensemble)
 - Diurnal 24-hour hourly traffic curves and historical vs predicted timelines
 - Stress testing & robustness curves (sensor dropout from 100% down to 30%)
 - GNNExplainer & SHAP attribution diagnosis for traffic control rooms
@@ -64,8 +64,8 @@ LANGUAGES = {
     "मराठी (Marathi)": "mr",
 }
 
-st.sidebar.markdown("### 🌐 Regional Language")
-selected_lang_name = st.sidebar.selectbox("Select Language / भाषा / மொழி", list(LANGUAGES.keys()))
+st.sidebar.markdown("### 🌐 Regional Language / भाषा / மொழி")
+selected_lang_name = st.sidebar.selectbox("Select Language", list(LANGUAGES.keys()), index=0)
 lang_code = LANGUAGES[selected_lang_name]
 trans_file = TRANS_DIR / f"{lang_code}.json"
 if trans_file.exists():
@@ -87,8 +87,8 @@ CHECKPOINTS = {
     "DCRNN (Diffusion Convolution)": "models/retrained_dcrnn_latest.pt",
 }
 
-st.sidebar.markdown("### 🧠 Active Neural Forecaster")
-chosen_model_label = st.sidebar.selectbox("Forecast Engine", list(CHECKPOINTS.keys()), index=0)
+st.sidebar.markdown(f"### 🧠 {t.get('neural_forecaster', 'Active Neural Forecaster')}")
+chosen_model_label = st.sidebar.selectbox(t.get('forecast_engine', 'Forecast Engine'), list(CHECKPOINTS.keys()), index=0)
 model_rel_path = CHECKPOINTS[chosen_model_label]
 
 
@@ -139,14 +139,14 @@ if not is_ensemble_mode:
 
 # Status metric in sidebar
 if is_ensemble_mode:
-    st.sidebar.success(f"✅ {t['model_status']}: Meta-Ensemble ({len(ensemble_instance.loaded_models)} Models Active)")
+    st.sidebar.success(f"✅ {t.get('model_status', 'Model Pipeline Status')}: Meta-Ensemble ({len(ensemble_instance.loaded_models)} Models Active)")
 elif model_instance is not None:
-    st.sidebar.success(f"✅ {t['model_status']}: Ready ({meta.get('model', 'Model').upper()})")
+    st.sidebar.success(f"✅ {t.get('model_status', 'Model Pipeline Status')}: Ready ({meta.get('model', 'Model').upper()})")
 else:
-    st.sidebar.warning(f"⚠️ {t['model_status']}: Fallback mode active.")
+    st.sidebar.warning(f"⚠️ {t.get('model_status', 'Model Pipeline Status')}: Fallback mode active.")
 
 horizon_min = st.sidebar.select_slider(
-    f"⏱️ {t['forecast_horizon']}",
+    f"⏱️ {t.get('forecast_horizon', 'Forecast Horizon (Minutes)')}",
     options=[15, 30, 45, 60],
     value=15,
 )
@@ -154,14 +154,33 @@ horizon_step = min(12, max(1, horizon_min // 5))  # 3, 6, 9, 12
 
 # 3. Factor Simulation Controls in Sidebar
 st.sidebar.markdown("---")
-st.sidebar.markdown("### 🎛️ Scenario Simulation Factors")
-st.sidebar.caption("Adjust real-world conditions to forecast future traffic response:")
+st.sidebar.markdown(f"### 🎛️ {t.get('scenario_factors', 'Scenario Simulation Factors')}")
+st.sidebar.caption(t.get('adjust_conditions_desc', 'Adjust real-world conditions to forecast future traffic response:'))
 
-rain_input = st.sidebar.slider("🌧️ Monsoon Rain Intensity (mm/hr)", min_value=0.0, max_value=60.0, value=0.0, step=5.0)
-waterlog_level = st.sidebar.selectbox("🌊 Waterlogging Severity", ["None", "Minor (5-10cm)", "Moderate (15-30cm)", "Severe (>30cm)"])
-festival_mode = st.sidebar.selectbox("🎉 Indian Festival Calendar", ["Normal Working Day", "Pre-Festival Eve Rush", "Festival Day (Diwali/Pongal)", "Post-Festival Congestion"])
-two_wheeler_share = st.sidebar.slider("🛵 2-Wheeler / Auto Mix Share", min_value=20, max_value=75, value=45, format="%d%%")
-incident_junction = st.sidebar.selectbox("🚧 Road Closure / Crash Injection", ["None"] + list(DEFAULT_JUNCTION_COORDS.keys()))
+rain_input = st.sidebar.slider(f"🌧️ {t.get('monsoon_rain_slider', 'Monsoon Rain Intensity (mm/hr)')}", min_value=0.0, max_value=60.0, value=0.0, step=5.0)
+
+# Localized waterlogging options
+wl_display_map = {
+    t.get("wl_none", "None"): "None",
+    t.get("wl_minor", "Minor (5-10cm)"): "Minor (5-10cm)",
+    t.get("wl_mod", "Moderate (15-30cm)"): "Moderate (15-30cm)",
+    t.get("wl_sev", "Severe (>30cm)"): "Severe (>30cm)",
+}
+selected_wl_display = st.sidebar.selectbox(f"🌊 {t.get('waterlog_severity', 'Waterlogging Severity')}", list(wl_display_map.keys()))
+waterlog_level = wl_display_map[selected_wl_display]
+
+# Localized festival options
+fest_display_map = {
+    t.get("fest_normal", "Normal Working Day"): "Normal Working Day",
+    t.get("fest_eve", "Pre-Festival Eve Rush"): "Pre-Festival Eve Rush",
+    t.get("fest_day", "Festival Day (Diwali/Pongal)"): "Festival Day (Diwali/Pongal)",
+    t.get("fest_post", "Post-Festival Congestion"): "Post-Festival Congestion",
+}
+selected_fest_display = st.sidebar.selectbox(f"🎉 {t.get('festival_calendar', 'Indian Festival Calendar')}", list(fest_display_map.keys()))
+festival_mode = fest_display_map[selected_fest_display]
+
+two_wheeler_share = st.sidebar.slider(f"🛵 {t.get('two_wheeler_share', '2-Wheeler / Auto Mix Share')}", min_value=20, max_value=75, value=45, format="%d%%")
+incident_junction = st.sidebar.selectbox(f"🚧 {t.get('road_closure', 'Road Closure / Crash Injection')}", [t.get("none_option", "None")] + list(DEFAULT_JUNCTION_COORDS.keys()))
 
 # Load validation tensor
 WINDOWS_PATH = ROOT_DIR / "data" / "processed" / "chennai_sheet_windows_retrained.npz"
@@ -274,39 +293,39 @@ for idx, j_name in enumerate(junction_names):
         alerts.append((j_name, cap, spd, cause))
 
 # ----------------- MAIN TITLE & HERO METRICS -----------------
-st.title(f"🚦 {t['title']}")
-st.caption(f"{t['subtitle']} • Engine: **{chosen_model_label}** • Active Horizon: **{horizon_min} min**")
+st.title(f"🚦 {t.get('title', 'Traffic Pulse AI — Urban Congestion Intelligence')}")
+st.caption(f"{t.get('subtitle', 'Real-time Spatio-Temporal GNN & Explainable Traffic Dashboard')} • {t.get('forecast_engine', 'Engine')}: **{chosen_model_label}** • {t.get('forecast_horizon', 'Active Horizon')}: **{horizon_min} min**")
 
 # Top Alert Ribbon
 if alerts:
     for a_name, a_cap, a_spd, a_cause in alerts:
         st.error(
-            f"🚨 **HIGH PRIORITY ALERT:** **{a_name.replace('_', ' ')}** reached **{a_cap:.0f}% capacity** "
-            f"(forecasted speed: **{a_spd:.1f} km/h** at +{horizon_min}m). **Cause:** {a_cause}. "
-            f"*Action: Trigger adaptive traffic signal green-split.*"
+            f"🚨 **{t.get('priority_alert', 'HIGH PRIORITY ALERT:')}** **{a_name.replace('_', ' ')}** {t.get('reached_capacity', 'reached capacity')} **{a_cap:.0f}%** "
+            f"({t.get('col_pred_speed', 'forecasted speed')}: **{a_spd:.1f} km/h** at +{horizon_min}m). **{t.get('primary_cause', 'Cause')}:** {a_cause}. "
+            f"*{t.get('action_recommendation', 'Action: Trigger adaptive traffic signal green-split.')}*"
         )
 else:
-    st.success(f"🟢 **Corridor Status Healthy:** All 20 arterial corridors operating below the 80% congestion threshold.")
+    st.success(f"🟢 {t.get('corridor_healthy', 'All 20 arterial corridors operating below the 80% congestion threshold.')}")
 
 # ----------------- 5 INTERACTIVE TABS -----------------
 tab_map, tab_bench, tab_timeseries, tab_stress, tab_xai = st.tabs([
-    "🗺️ Corridor Map & Alerts",
-    "📊 Model Benchmarks & Comparison",
-    "📈 Time Series & Diurnal Cycles",
-    "🌧️ Stress Testing & Robustness",
-    "🔍 Explainable AI (XAI) Attribution",
+    f"🗺️ {t.get('tab_map', 'Corridor Map & Alerts')}",
+    f"📊 {t.get('tab_bench', 'Model Benchmarks & Comparison')}",
+    f"📈 {t.get('tab_timeseries', 'Time Series & Diurnal Cycles')}",
+    f"🌧️ {t.get('tab_stress', 'Stress Testing & Robustness')}",
+    f"🔍 {t.get('tab_xai', 'Explainable AI (XAI) Attribution')}",
 ])
 
 # ----------------- TAB 1: CORRIDOR MAP -----------------
 with tab_map:
     col_map, col_kpi = st.columns([7, 5])
     with col_map:
-        st.subheader(f"🗺️ Interactive City Map (+{horizon_min} min Forecast)")
+        st.subheader(f"🗺️ {t.get('city_map_title', 'Interactive City Map')} (+{horizon_min} min {t.get('forecast_horizon', 'Forecast')})")
         folium_map = build_traffic_folium_map(junction_preds)
         components.html(folium_map._repr_html_(), height=520)
 
     with col_kpi:
-        st.subheader("📍 Key Arterial Junction KPIs")
+        st.subheader(f"📍 {t.get('key_kpis_title', 'Key Arterial Junction KPIs')}")
         kpi_cols = st.columns(2)
         spotlight_junctions = ["Kathipara", "Guindy", "T_Nagar_Panagal", "Central_Station", "Perungudi_OMR", "Koyambedu"]
         for i, jn in enumerate(spotlight_junctions):
@@ -317,32 +336,29 @@ with tab_map:
                     st.metric(
                         label=jn.replace("_", " "),
                         value=f"{p['speed']:.1f} km/h",
-                        delta=f"{p['capacity_pct']:.0f}% capacity",
+                        delta=f"{p['capacity_pct']:.0f}% {t.get('capacity_reached', 'capacity')}",
                         delta_color=delta_color,
                     )
         st.markdown("---")
-        st.caption("🟢 Green: <50% Capacity (Free Flow) | 🟡 Amber: 50-79% (Slowdown) | 🔴 Red: ≥80% (Severe Congestion)")
+        st.caption(t.get('legend_text', 'Green: <50% Capacity (Free Flow) | Amber: 50-79% (Slowdown) | Red: >=80% (Severe Congestion)'))
 
-    st.subheader("📊 Congestion Severity Across All 20 Metropolitan Junctions")
+    st.subheader(f"📊 {t.get('severity_all_title', 'Congestion Severity Across All 20 Metropolitan Junctions')}")
     df_junc = pd.DataFrame([
         {
             "Junction": j.replace("_", " "),
-            "Predicted Speed (km/h)": round(p["speed"], 1),
-            "Capacity Used (%)": round(p["capacity_pct"], 1),
-            "Free-Flow Baseline": p["free_flow"],
+            t.get("col_pred_speed", "Predicted Speed (km/h)"): round(p["speed"], 1),
+            t.get("col_cap_used", "Capacity Used (%)"): round(p["capacity_pct"], 1),
+            t.get("col_free_flow", "Free-Flow Baseline"): p["free_flow"],
         }
         for j, p in junction_preds.items()
-    ]).sort_values(by="Capacity Used (%)", ascending=False)
-    st.bar_chart(df_junc.set_index("Junction")["Capacity Used (%)"])
+    ]).sort_values(by=t.get("col_cap_used", "Capacity Used (%)"), ascending=False)
+    st.bar_chart(df_junc.set_index("Junction")[t.get("col_cap_used", "Capacity Used (%)")])
 
 
 # ----------------- TAB 2: MODEL COMPARISON & BENCHMARKS -----------------
 with tab_bench:
-    st.subheader("📊 Comprehensive Model Benchmark Comparison (Held-out Test Split)")
-    st.markdown("""
-    All models were retrained and evaluated on the same 26,718-record Chennai Google Sheets traffic log
-    (20 arterial junctions, chronological 70/10/20 train/val/test split) using an NVIDIA RTX 3050 GPU.
-    """)
+    st.subheader(f"📊 {t.get('benchmarks_title', 'Comprehensive Model Benchmark Comparison (Held-out Test Split)')}")
+    st.markdown(t.get('benchmarks_desc', 'All models were retrained and evaluated on the same 26,718-record Chennai Google Sheets traffic log using an NVIDIA RTX 3050 GPU.'))
 
     benchmark_data = [
         {"Model": "🧠 TrafficPulse Meta-Ensemble", "Category": "Bayesian Stacking Mixture", "15m MAE": 0.884, "15m MAPE": "4.41%", "30m MAE": 1.112, "60m MAE": 1.295, "Params": "3.1M combined", "Retrained Checkpoint": "All 7 Models Combined"},
@@ -361,7 +377,7 @@ with tab_bench:
 
     col_b1, col_b2 = st.columns([6, 6])
     with col_b1:
-        st.subheader("📉 Forecasting Error (MAE in km/h) by Horizon")
+        st.subheader(f"📉 {t.get('chart_error_title', 'Forecasting Error (MAE in km/h) by Horizon')}")
         chart_df = pd.DataFrame({
             "Meta-Ensemble": [0.884, 1.112, 1.295],
             "Graph WaveNet": [0.929, 1.203, 1.609],
@@ -374,7 +390,7 @@ with tab_bench:
         st.line_chart(chart_df)
 
     with col_b2:
-        st.subheader("📈 Neural Training Loss Convergence")
+        st.subheader(f"📈 {t.get('chart_loss_title', 'Neural Training Loss Convergence')}")
         epochs_x = np.arange(1, 26)
         train_loss = 0.045 * np.exp(-epochs_x / 5.0) + 0.013 + np.random.normal(0, 0.0003, size=len(epochs_x))
         val_loss = 0.052 * np.exp(-epochs_x / 5.5) + 0.015 + np.random.normal(0, 0.0004, size=len(epochs_x))
@@ -382,10 +398,10 @@ with tab_bench:
         st.line_chart(loss_df)
 
     st.markdown("---")
-    st.subheader("🎯 Multi-Model Real-Time Consensus Explorer")
-    st.caption("Compare how all individual neural architectures predict speed for any corridor under active simulation:")
+    st.subheader(f"🎯 {t.get('consensus_title', 'Multi-Model Real-Time Consensus Explorer')}")
+    st.caption(t.get('consensus_desc', 'Compare how all individual neural architectures predict speed for any corridor under active simulation:'))
 
-    sel_consensus_junc = st.selectbox("Select Junction to inspect all individual model predictions:", junction_names, index=0)
+    sel_consensus_junc = st.selectbox(t.get('consensus_select', 'Select Junction to inspect all individual model predictions:'), junction_names, index=0)
     c_idx = junction_names.index(sel_consensus_junc)
     step_idx = horizon_step - 1
 
@@ -405,15 +421,15 @@ with tab_bench:
         c_std = float(uncertainty_std[step_idx, c_idx])
         c_mean = float(raw_speeds[step_idx, c_idx])
         agree_pct = max(0.0, min(100.0, (1.0 - (c_std / (c_mean + 1e-5))) * 100.0))
-        st.info(f"**Ensemble Consensus Speed:** `{c_mean:.1f} km/h` | **Inter-Model Standard Deviation:** `±{c_std:.2f} km/h` | **Inter-Model Agreement Confidence:** `{agree_pct:.1f}%`")
+        st.info(f"**{t.get('consensus_speed_label', 'Ensemble Consensus Speed')}:** `{c_mean:.1f} km/h` | **{t.get('std_label', 'Inter-Model Standard Deviation')}:** `±{c_std:.2f} km/h` | **{t.get('agreement_label', 'Inter-Model Agreement Confidence')}:** `{agree_pct:.1f}%`")
     else:
         st.write("Switch to '🧠 Multi-Model Meta-Ensemble' in the sidebar to view live model-by-model comparisons.")
 
 
 # ----------------- TAB 3: TIME SERIES & DIURNAL PATTERNS -----------------
 with tab_timeseries:
-    st.subheader("📈 24-Hour Diurnal Traffic Velocity Patterns (Chennai Metro)")
-    st.caption("Visualizing typical weekday congestion cycles across peak commuter windows:")
+    st.subheader(f"📈 {t.get('diurnal_title', '24-Hour Diurnal Traffic Velocity Patterns (Chennai Metro)')}")
+    st.caption(t.get('diurnal_desc', 'Visualizing typical weekday congestion cycles across peak commuter windows:'))
 
     hours = [f"{h:02d}:00" for h in range(24)]
     base_diurnal = [
@@ -430,8 +446,8 @@ with tab_timeseries:
     }, index=hours)
     st.line_chart(diurnal_df)
 
-    st.subheader("⏱️ Multi-Step Horizon Forecast Trajectory with 95% Confidence Band")
-    sel_junction = st.selectbox("Inspect Junction Forecast Trajectory", junction_names, index=0)
+    st.subheader(f"⏱️ {t.get('trajectory_title', 'Multi-Step Horizon Forecast Trajectory with 95% Confidence Band')}")
+    sel_junction = st.selectbox(t.get('trajectory_select', 'Inspect Junction Forecast Trajectory'), junction_names, index=0)
     j_idx = junction_names.index(sel_junction)
     timesteps = [f"+{m}m" for m in range(5, 65, 5)]
 
@@ -441,22 +457,22 @@ with tab_timeseries:
     traj_high = traj_mean + 1.96 * traj_std
 
     traj_df = pd.DataFrame({
-        "Ensemble Forecast (km/h)": traj_mean,
+        f"{chosen_model_label} (km/h)": traj_mean,
         "95% Lower Bound": traj_low,
         "95% Upper Bound": traj_high,
-        "Free-Flow Baseline": [free_flow_defaults.get(sel_junction, 35.0)] * 12,
+        t.get("col_free_flow", "Free-Flow Baseline"): [free_flow_defaults.get(sel_junction, 35.0)] * 12,
     }, index=timesteps)
     st.line_chart(traj_df)
 
 
 # ----------------- TAB 4: STRESS TESTING & ROBUSTNESS -----------------
 with tab_stress:
-    st.subheader("🌧️ Robustness Under Extreme Conditions & Sensor Dropouts")
+    st.subheader(f"🌧️ {t.get('stress_title', 'Robustness Under Extreme Conditions & Sensor Dropouts')}")
     col_s1, col_s2 = st.columns([6, 6])
 
     with col_s1:
-        st.subheader("📡 Sensor Dropout Resilience Curve")
-        st.caption("Evaluating model tolerance when ITMS detectors or cameras experience network outages:")
+        st.subheader(f"📡 {t.get('dropout_title', 'Sensor Dropout Resilience Curve')}")
+        st.caption(t.get('dropout_desc', 'Evaluating model tolerance when ITMS detectors or cameras experience network outages:'))
         dropout_levels = ["100%", "90%", "80%", "70%", "60%", "50%", "40%", "30%"]
         dropout_mae = [1.231, 1.281, 1.355, 1.455, 1.580, 1.762, 1.980, 2.217]
         baseline_dropout = [1.227, 1.350, 1.520, 1.740, 2.010, 2.350, 2.800, 3.450]
@@ -465,43 +481,40 @@ with tab_stress:
             "Standard Baseline (without Graph Imputation)": baseline_dropout,
         }, index=dropout_levels)
         st.line_chart(drop_df)
-        st.caption("💡 The Sparse Sensor Imputer keeps error under 1.76 km/h even when 50% of city sensors drop offline.")
+        st.caption(f"💡 {t.get('dropout_insight', 'The Sparse Sensor Imputer keeps error under 1.76 km/h even when 50% of city sensors drop offline.')}")
 
     with col_s2:
-        st.subheader("⛈️ Monsoon Precipitation Degradation Curve")
+        st.subheader(f"⛈️ {t.get('monsoon_curve_title', 'Monsoon Precipitation Degradation Curve')}")
         rain_range = np.linspace(0, 60, 20)
         speed_impact = [35.0 * (1.0 - 0.35 * (1.0 - np.exp(-r / 15.0))) for r in rain_range]
-        rain_df = pd.DataFrame({"Effective Free Flow Speed (km/h)": speed_impact}, index=[f"{int(r)} mm/h" for r in rain_range])
+        rain_df = pd.DataFrame({"Effective Speed (km/h)": speed_impact}, index=[f"{int(r)} mm/h" for r in rain_range])
         st.line_chart(rain_df)
-        st.caption("💡 Tropical rainfall above 25 mm/hr triggers severe brake latency and lane narrowing, reducing speed by ~35%.")
+        st.caption(f"💡 {t.get('monsoon_curve_insight', 'Tropical rainfall above 25 mm/hr triggers severe brake latency and lane narrowing, reducing speed by ~35%.')}")
 
 
 # ----------------- TAB 5: EXPLAINABLE AI (XAI) & FACTOR ATTRIBUTION -----------------
 with tab_xai:
-    st.subheader("🔍 Explainable AI (XAI) — Root Cause & Factor Attribution")
-    st.markdown("""
-    Using **Gradient Saliency & GNNExplainer**, the model explains *why* a specific junction is slowing down
-    and attributes responsibility across all active environmental factors.
-    """)
+    st.subheader(f"🔍 {t.get('xai_title', 'Explainable AI (XAI) — Root Cause & Factor Attribution')}")
+    st.markdown(t.get('xai_desc', 'Using Gradient Saliency & GNNExplainer, the model explains why a specific junction is slowing down and attributes responsibility across all active environmental factors.'))
 
-    xai_junction = st.selectbox("Select Target Junction for XAI Deep-Dive", junction_names, index=0)
+    xai_junction = st.selectbox(t.get('xai_select', 'Select Target Junction for XAI Deep-Dive'), junction_names, index=0)
     x_idx = junction_names.index(xai_junction)
 
     col_x1, col_x2 = st.columns([6, 6])
     with col_x1:
-        st.subheader("📋 Control Room Operational Briefing")
+        st.subheader(f"📋 {t.get('briefing_title', 'Control Room Operational Briefing')}")
         p_data = junction_preds[xai_junction]
+        suggested_action = t.get('deploy_warden', 'Deploy traffic warden + extend green cycle +30s') if p_data['capacity_pct'] >= 80 else t.get('standard_timing', 'Standard automated signal timing sufficient')
         st.info(f"""
-        **Target:** `{xai_junction.replace('_', ' ')}`  
-        **Predicted Velocity:** `{p_data['speed']:.1f} km/h` (Free-flow: `{p_data['free_flow']:.1f} km/h`)  
-        **Arterial Saturation:** `{p_data['capacity_pct']:.0f}%`  
-        **Primary Bottleneck Driver:** `{p_data['explanation']}`  
-        **Suggested Control Action:** `{'Deploy traffic warden + extend green cycle +30s' if p_data['capacity_pct'] >= 80 else 'Standard automated signal timing sufficient'}`
+        **{t.get('target_label', 'Target')}:** `{xai_junction.replace('_', ' ')}`  
+        **{t.get('predicted_speed', 'Predicted Flow Speed')}:** `{p_data['speed']:.1f} km/h` ({t.get('col_free_flow', 'Free-Flow')}: `{p_data['free_flow']:.1f} km/h`)  
+        **{t.get('arterial_sat_label', 'Arterial Saturation')}:** `{p_data['capacity_pct']:.0f}%`  
+        **{t.get('primary_driver_label', 'Primary Bottleneck Driver')}:** `{p_data['explanation']}`  
+        **{t.get('suggested_action_label', 'Suggested Control Action')}:** `{suggested_action}`
         """)
 
     with col_x2:
-        st.subheader("📊 Factor Saliency Attribution (%)")
-        # Compute dynamic attribution weights based on simulated factors
+        st.subheader(f"📊 {t.get('factor_saliency_title', 'Factor Saliency Attribution (%)')}")
         w_speed = 40.0
         w_diurnal = 25.0
         w_rain = min(35.0, rain_input * 0.6)
@@ -511,14 +524,14 @@ with tab_xai:
 
         total_w = w_speed + w_diurnal + w_rain + w_fest + w_mix + w_spill
         attr_dict = {
-            "Recent Velocity Trend": round(w_speed / total_w * 100, 1),
-            "Diurnal Rush Hour Pattern": round(w_diurnal / total_w * 100, 1),
-            "Monsoon Rain / Traction Loss": round(w_rain / total_w * 100, 1),
-            "Festival Calendar Rush": round(w_fest / total_w * 100, 1),
-            "2-Wheeler / Auto Friction": round(w_mix / total_w * 100, 1),
-            "Upstream Corridor Spillover": round(w_spill / total_w * 100, 1),
+            t.get("factor_speed", "Recent Velocity Trend"): round(w_speed / total_w * 100, 1),
+            t.get("factor_diurnal", "Diurnal Rush Hour Pattern"): round(w_diurnal / total_w * 100, 1),
+            t.get("factor_monsoon", "Monsoon Rain / Traction Loss"): round(w_rain / total_w * 100, 1),
+            t.get("factor_fest", "Festival Calendar Rush"): round(w_fest / total_w * 100, 1),
+            t.get("factor_mix", "2-Wheeler / Auto Friction"): round(w_mix / total_w * 100, 1),
+            t.get("factor_spillover", "Upstream Corridor Spillover"): round(w_spill / total_w * 100, 1),
         }
         st.bar_chart(pd.Series(attr_dict))
 
 st.markdown("---")
-st.caption("Traffic Pulse AI • Smart Cities Congestion Framework • Built for Chennai Metropolitan Development Authority (CMDA)")
+st.caption(t.get('footer_text', 'Traffic Pulse AI • Smart Cities Congestion Framework • Built for Chennai Metropolitan Development Authority (CMDA)'))
