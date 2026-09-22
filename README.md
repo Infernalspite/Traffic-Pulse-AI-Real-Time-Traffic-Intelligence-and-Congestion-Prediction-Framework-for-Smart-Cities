@@ -100,6 +100,7 @@ docker compose up --build
 
 Optional collectors are explicit:
 
+
 ```bash
 python scripts/fetch_open_meteo.py --latitude 13.0827 --longitude 80.2707 --start-date 2026-07-19 --end-date 2026-08-26 --output data/raw/chennai_open_meteo.csv
 python scripts/download_benchmarks.py --metr-la-url <current-download-url> --pems-bay-url <current-download-url>
@@ -108,3 +109,6 @@ python scripts/download_benchmarks.py --metr-la-url <current-download-url> --pem
 ## Safety and reproducibility
 
 Never commit API keys, generated caches, local virtual environments, or notebook checkpoints. Large binary assets use Git LFS pointers; ensure Git LFS is installed before fetching them.
+
+*Thoughts*
+Will work better if its trained with better data from a 24/7 cctv for example. IITM-HeTra: Dataset for Vehicle Detection in Heterogeneous Traffic Scenarios can be integrated when it's fed real time cctv data. Future move is to do that.
