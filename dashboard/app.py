@@ -1,4 +1,4 @@
-﻿"""Interactive Multilingual Traffic Intelligence, Multi-Model Benchmarks & XAI Dashboard.
+"""Interactive Multilingual Traffic Intelligence, Multi-Model Benchmarks & XAI Dashboard.
 
 Features:
 - Full multilingual UI localized in 5 Indian languages: English, Hindi, Kannada, Tamil, Marathi
@@ -16,6 +16,10 @@ from __future__ import annotations
 
 import json
 import os
+import queue
+import subprocess
+import threading
+import time
 from pathlib import Path
 import sys
 
@@ -181,6 +185,136 @@ festival_mode = fest_display_map[selected_fest_display]
 
 two_wheeler_share = st.sidebar.slider(f"🛵 {t.get('two_wheeler_share', '2-Wheeler / Auto Mix Share')}", min_value=20, max_value=75, value=45, format="%d%%")
 incident_junction = st.sidebar.selectbox(f"🚧 {t.get('road_closure', 'Road Closure / Crash Injection')}", [t.get("none_option", "None")] + list(DEFAULT_JUNCTION_COORDS.keys()))
+
+# ── 🔄 REFRESH DATA & RETRAIN BUTTON ─────────────────────────────────────────
+st.sidebar.markdown("---")
+st.sidebar.markdown(f"### 🔄 {t.get('retrain_heading', 'Data Refresh & Model Retrain')}")
+st.sidebar.caption(t.get(
+    "retrain_desc",
+    "Fetch the latest traffic snapshot, rebuild tensors, and retrain all 7 models with new data."
+))
+
+col_rt1, col_rt2 = st.sidebar.columns([3, 2])
+with col_rt1:
+    epochs_choice = st.number_input(
+        t.get("retrain_epochs", "Epochs per model"),
+        min_value=1, max_value=50, value=10, step=1,
+    )
+with col_rt2:
+    skip_collect = st.checkbox(
+        t.get("retrain_skip_collect", "Skip data fetch"),
+        value=False,
+        help="Use existing raw CSV instead of calling the TomTom API.",
+    )
+
+models_to_retrain = st.sidebar.multiselect(
+    t.get("retrain_models_select", "Models to retrain"),
+    options=["gwnet", "agcrn", "lstm", "stgcn", "dcrnn", "graph", "india_aware"],
+    default=["gwnet", "agcrn", "lstm", "stgcn", "dcrnn", "graph", "india_aware"],
+)
+
+retrain_btn = st.sidebar.button(
+    f"🚀 {t.get('retrain_button', 'Refresh & Retrain Now')}",
+    use_container_width=True,
+    type="primary",
+)
+
+# Retrain state lives in session_state so it persists across reruns
+if "retrain_running" not in st.session_state:
+    st.session_state.retrain_running = False
+if "retrain_logs" not in st.session_state:
+    st.session_state.retrain_logs = []
+if "retrain_pct" not in st.session_state:
+    st.session_state.retrain_pct = 0
+if "retrain_done" not in st.session_state:
+    st.session_state.retrain_done = False
+if "retrain_log_queue" not in st.session_state:
+    st.session_state.retrain_log_queue = None
+
+
+def _stream_worker(proc: subprocess.Popen, q: queue.Queue) -> None:
+    """Thread: read worker stdout and put JSON log records onto queue."""
+    for raw_line in proc.stdout:
+        raw_line = raw_line.strip()
+        if not raw_line:
+            continue
+        try:
+            q.put(json.loads(raw_line))
+        except json.JSONDecodeError:
+            q.put({"stage": "worker", "msg": raw_line, "pct": -1})
+    proc.wait()
+    q.put({"stage": "done", "msg": "__FINISHED__", "pct": 100})
+
+
+if retrain_btn and not st.session_state.retrain_running:
+    # Launch the background worker as a subprocess
+    worker_script = ROOT_DIR / "dashboard" / "retrain_worker.py"
+    cmd = [
+        sys.executable, str(worker_script),
+        "--epochs", str(int(epochs_choice)),
+        "--models", ",".join(models_to_retrain) if models_to_retrain else "gwnet",
+    ]
+    if skip_collect:
+        cmd.append("--skip-collect")
+
+    proc = subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        cwd=str(ROOT_DIR),
+    )
+    log_q: queue.Queue = queue.Queue()
+    t_thread = threading.Thread(target=_stream_worker, args=(proc, log_q), daemon=True)
+    t_thread.start()
+
+    st.session_state.retrain_running = True
+    st.session_state.retrain_done = False
+    st.session_state.retrain_logs = []
+    st.session_state.retrain_pct = 0
+    st.session_state.retrain_log_queue = log_q
+    st.session_state._retrain_proc = proc
+
+# Drain any pending log records every rerun
+if st.session_state.retrain_running and st.session_state.retrain_log_queue is not None:
+    q_ref: queue.Queue = st.session_state.retrain_log_queue
+    while True:
+        try:
+            record = q_ref.get_nowait()
+        except queue.Empty:
+            break
+        if record.get("msg") == "__FINISHED__":
+            st.session_state.retrain_running = False
+            st.session_state.retrain_done = True
+            st.session_state.retrain_pct = 100
+            # Clear the model cache so dashboard reloads updated checkpoints
+            st.cache_resource.clear()
+            break
+        st.session_state.retrain_logs.append(f"[{record['stage'].upper()}] {record['msg']}")
+        if record.get("pct", -1) >= 0:
+            st.session_state.retrain_pct = record["pct"]
+
+# Render progress UI in sidebar
+if st.session_state.retrain_running or st.session_state.retrain_done:
+    st.sidebar.markdown("---")
+    pct = st.session_state.retrain_pct
+    if st.session_state.retrain_running:
+        st.sidebar.warning(f"⏳ {t.get('retrain_in_progress', 'Retraining in progress...')} **{pct}%**")
+    else:
+        st.sidebar.success(f"✅ {t.get('retrain_complete', 'Retrain complete! Models updated.')} Reload page to apply.")
+
+    st.sidebar.progress(min(pct, 100) / 100)
+
+    with st.sidebar.expander(t.get("retrain_log_label", "📋 Live Training Log"), expanded=st.session_state.retrain_running):
+        log_text = "\n".join(st.session_state.retrain_logs[-60:])  # last 60 lines
+        st.code(log_text or "(waiting for output...)", language=None)
+
+    if st.session_state.retrain_running:
+        # Auto-refresh every 2s while running
+        time.sleep(2)
+        st.rerun()
+
+# ── END RETRAIN SECTION ───────────────────────────────────────────────────────
 
 # Load validation tensor
 WINDOWS_PATH = ROOT_DIR / "data" / "processed" / "chennai_sheet_windows_retrained.npz"

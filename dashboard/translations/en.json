@@ -1,4 +1,4 @@
-﻿{
+{
   "title": "Traffic Pulse AI — Urban Congestion Intelligence",
   "subtitle": "Real-time Spatio-Temporal GNN & Explainable Traffic Dashboard",
   "language_label": "Select Language",
@@ -89,5 +89,14 @@
   "factor_monsoon": "Monsoon Rain / Traction Loss",
   "factor_fest": "Festival Calendar Rush",
   "factor_mix": "2-Wheeler / Auto Friction",
-  "factor_spillover": "Upstream Corridor Spillover"
+  "factor_spillover": "Upstream Corridor Spillover",
+  "retrain_heading": "Data Refresh & Model Retrain",
+  "retrain_desc": "Fetch the latest traffic snapshot, rebuild tensors, and retrain all 7 models with new data.",
+  "retrain_epochs": "Epochs per model",
+  "retrain_skip_collect": "Skip data fetch",
+  "retrain_models_select": "Models to retrain",
+  "retrain_button": "Refresh & Retrain Now",
+  "retrain_in_progress": "Retraining in progress...",
+  "retrain_complete": "Retrain complete! Models updated.",
+  "retrain_log_label": "📋 Live Training Log"
 }
