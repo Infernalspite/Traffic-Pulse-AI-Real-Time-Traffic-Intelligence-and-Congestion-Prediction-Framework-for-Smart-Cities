@@ -203,13 +203,14 @@ html, body, .stApp {
 .kpi-icon {
     width: 38px; height: 38px; border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 17px; flex-shrink: 0;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+    text-transform: uppercase;
 }
-.kpi-icon.g { background: #E6F4EC; }
-.kpi-icon.a { background: #FDF2E3; }
-.kpi-icon.r { background: #FDE8E8; }
-.kpi-icon.b { background: #E8F0FD; }
-.kpi-icon.s { background: #EEEDF2; }
+.kpi-icon.g { background: #E6F4EC; color: #1E7E45 !important; }
+.kpi-icon.a { background: #FDF2E3; color: #B56C1B !important; }
+.kpi-icon.r { background: #FDE8E8; color: #C0392B !important; }
+.kpi-icon.b { background: #E8F0FD; color: #2980B9 !important; }
+.kpi-icon.s { background: #EEEDF2; color: #555160 !important; }
 .kpi-label {
     font-size: 10px; color: #7A746C !important; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 3px;
@@ -226,7 +227,6 @@ html, body, .stApp {
     padding: 13px 18px; margin-bottom: 10px;
     display: flex; align-items: flex-start; gap: 12px;
 }
-.alert-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
 .alert-title { font-size: 13px; font-weight: 700; color: #1C1C1A !important; margin-bottom: 2px; }
 .alert-detail { font-size: 12px; color: #4A4444 !important; line-height: 1.55; }
 .all-clear {
@@ -364,24 +364,34 @@ html, body, .stApp {
     color: #1C1C1A !important;
 }
 
-/* ── DATAFRAME ── */
-[data-testid="stDataFrame"] {
+/* ── DATAFRAME & TABLE LIGHT THEME OVERRIDES ── */
+[data-testid="stDataFrame"], .stDataFrame {
     border: 1px solid #EAE6DD !important;
     border-radius: 12px !important;
     overflow: hidden !important;
     box-shadow: 0 1px 4px rgba(0,0,0,.04) !important;
     background: #FFFFFF !important;
 }
-[data-testid="stDataFrame"] * {
+
+[data-testid="stDataFrame"] *, .stDataFrame * {
+    background-color: #FFFFFF !important;
     color: #1C1C1A !important;
 }
-[data-testid="stDataFrame"] thead th, [data-testid="stDataFrame"] thead th * {
+
+[data-testid="stDataFrame"] thead th, [data-testid="stDataFrame"] thead th *,
+.stDataFrame thead th {
     background: #F7F4EF !important;
     font-size: 11px !important;
     font-weight: 700 !important;
     letter-spacing: 0.05em !important;
     text-transform: uppercase !important;
     color: #5A564E !important;
+}
+
+table, th, td {
+    background-color: #FFFFFF !important;
+    color: #1C1C1A !important;
+    border-color: #EAE6DD !important;
 }
 
 /* ── EXPANDERS ── */
@@ -473,7 +483,7 @@ LANGUAGES = {
     "मराठी (Marathi)": "mr",
 }
 
-st.sidebar.markdown("### 🌐 Regional Language / भाषा / மொழி")
+st.sidebar.markdown("### Regional Language / भाषा / மொழி")
 selected_lang_name = st.sidebar.selectbox("Select Language", list(LANGUAGES.keys()), index=0)
 lang_code = LANGUAGES[selected_lang_name]
 trans_file = TRANS_DIR / f"{lang_code}.json"
@@ -486,8 +496,8 @@ st.sidebar.markdown("---")
 
 # 2. Model Selection & Loader
 CHECKPOINTS = {
-    "🧠 Multi-Model Meta-Ensemble (All 7 Models Combined)": "ensemble",
-    "Graph WaveNet (⭐ Best Baseline)": "models/retrained_gwnet_latest.pt",
+    "Multi-Model Meta-Ensemble (All 7 Models Combined)": "ensemble",
+    "Graph WaveNet (Best Baseline)": "models/retrained_gwnet_latest.pt",
     "India-Aware Proposed (Modular)": "models/retrained_india_aware_latest.pt",
     "AGCRN (Adaptive Recurrent GCN)": "models/retrained_agcrn_latest.pt",
     "LSTM Baseline (Graph-Unaware)": "models/retrained_lstm_latest.pt",
@@ -496,7 +506,7 @@ CHECKPOINTS = {
     "DCRNN (Diffusion Convolution)": "models/retrained_dcrnn_latest.pt",
 }
 
-st.sidebar.markdown(f"### 🧠 {t.get('neural_forecaster', 'Active Neural Forecaster')}")
+st.sidebar.markdown(f"### {t.get('neural_forecaster', 'Active Neural Forecaster')}")
 chosen_model_label = st.sidebar.selectbox(t.get('forecast_engine', 'Forecast Engine'), list(CHECKPOINTS.keys()), index=0)
 model_rel_path = CHECKPOINTS[chosen_model_label]
 
@@ -548,14 +558,14 @@ if not is_ensemble_mode:
 
 # Status metric in sidebar
 if is_ensemble_mode:
-    st.sidebar.success(f"✅ {t.get('model_status', 'Model Pipeline Status')}: Meta-Ensemble ({len(ensemble_instance.loaded_models)} Models Active)")
+    st.sidebar.success(f"{t.get('model_status', 'Model Pipeline Status')}: Meta-Ensemble ({len(ensemble_instance.loaded_models)} Models Active)")
 elif model_instance is not None:
-    st.sidebar.success(f"✅ {t.get('model_status', 'Model Pipeline Status')}: Ready ({meta.get('model', 'Model').upper()})")
+    st.sidebar.success(f"{t.get('model_status', 'Model Pipeline Status')}: Ready ({meta.get('model', 'Model').upper()})")
 else:
-    st.sidebar.warning(f"⚠️ {t.get('model_status', 'Model Pipeline Status')}: Fallback mode active.")
+    st.sidebar.warning(f"{t.get('model_status', 'Model Pipeline Status')}: Fallback mode active.")
 
 horizon_min = st.sidebar.select_slider(
-    f"⏱️ {t.get('forecast_horizon', 'Forecast Horizon (Minutes)')}",
+    f"{t.get('forecast_horizon', 'Forecast Horizon (Minutes)')}",
     options=[15, 30, 45, 60],
     value=15,
 )
@@ -563,10 +573,10 @@ horizon_step = min(12, max(1, horizon_min // 5))  # 3, 6, 9, 12
 
 # 3. Factor Simulation Controls in Sidebar
 st.sidebar.markdown("---")
-st.sidebar.markdown(f"### 🎛️ {t.get('scenario_factors', 'Scenario Simulation Factors')}")
+st.sidebar.markdown(f"### {t.get('scenario_factors', 'Scenario Simulation Factors')}")
 st.sidebar.caption(t.get('adjust_conditions_desc', 'Adjust real-world conditions to forecast future traffic response:'))
 
-rain_input = st.sidebar.slider(f"🌧️ {t.get('monsoon_rain_slider', 'Monsoon Rain Intensity (mm/hr)')}", min_value=0.0, max_value=60.0, value=0.0, step=5.0)
+rain_input = st.sidebar.slider(f"{t.get('monsoon_rain_slider', 'Monsoon Rain Intensity (mm/hr)')}", min_value=0.0, max_value=60.0, value=0.0, step=5.0)
 
 # Localized waterlogging options
 wl_display_map = {
@@ -575,7 +585,7 @@ wl_display_map = {
     t.get("wl_mod", "Moderate (15-30cm)"): "Moderate (15-30cm)",
     t.get("wl_sev", "Severe (>30cm)"): "Severe (>30cm)",
 }
-selected_wl_display = st.sidebar.selectbox(f"🌊 {t.get('waterlog_severity', 'Waterlogging Severity')}", list(wl_display_map.keys()))
+selected_wl_display = st.sidebar.selectbox(f"{t.get('waterlog_severity', 'Waterlogging Severity')}", list(wl_display_map.keys()))
 waterlog_level = wl_display_map[selected_wl_display]
 
 # Localized festival options
@@ -585,15 +595,15 @@ fest_display_map = {
     t.get("fest_day", "Festival Day (Diwali/Pongal)"): "Festival Day (Diwali/Pongal)",
     t.get("fest_post", "Post-Festival Congestion"): "Post-Festival Congestion",
 }
-selected_fest_display = st.sidebar.selectbox(f"🎉 {t.get('festival_calendar', 'Indian Festival Calendar')}", list(fest_display_map.keys()))
+selected_fest_display = st.sidebar.selectbox(f"{t.get('festival_calendar', 'Indian Festival Calendar')}", list(fest_display_map.keys()))
 festival_mode = fest_display_map[selected_fest_display]
 
-two_wheeler_share = st.sidebar.slider(f"🛵 {t.get('two_wheeler_share', '2-Wheeler / Auto Mix Share')}", min_value=20, max_value=75, value=45, format="%d%%")
-incident_junction = st.sidebar.selectbox(f"🚧 {t.get('road_closure', 'Road Closure / Crash Injection')}", [t.get("none_option", "None")] + list(DEFAULT_JUNCTION_COORDS.keys()))
+two_wheeler_share = st.sidebar.slider(f"{t.get('two_wheeler_share', '2-Wheeler / Auto Mix Share')}", min_value=20, max_value=75, value=45, format="%d%%")
+incident_junction = st.sidebar.selectbox(f"{t.get('road_closure', 'Road Closure / Crash Injection')}", [t.get("none_option", "None")] + list(DEFAULT_JUNCTION_COORDS.keys()))
 
-# ── 🔄 REFRESH DATA & RETRAIN BUTTON ─────────────────────────────────────────
+# ── REFRESH DATA & RETRAIN BUTTON ─────────────────────────────────────────
 st.sidebar.markdown("---")
-st.sidebar.markdown(f"### 🔄 {t.get('retrain_heading', 'Data Refresh & Model Retrain')}")
+st.sidebar.markdown(f"### {t.get('retrain_heading', 'Data Refresh & Model Retrain')}")
 st.sidebar.caption(t.get(
     "retrain_desc",
     "Fetch the latest traffic snapshot, rebuild tensors, and retrain all 7 models with new data."
@@ -619,7 +629,7 @@ models_to_retrain = st.sidebar.multiselect(
 )
 
 retrain_btn = st.sidebar.button(
-    f"🚀 {t.get('retrain_button', 'Refresh & Retrain Now')}",
+    f"{t.get('retrain_button', 'Refresh & Retrain Now')}",
     use_container_width=True,
     type="primary",
 )
@@ -704,13 +714,13 @@ if st.session_state.retrain_running or st.session_state.retrain_done:
     st.sidebar.markdown("---")
     pct = st.session_state.retrain_pct
     if st.session_state.retrain_running:
-        st.sidebar.warning(f"⏳ {t.get('retrain_in_progress', 'Retraining in progress...')} **{pct}%**")
+        st.sidebar.warning(f"{t.get('retrain_in_progress', 'Retraining in progress...')} {pct}%")
     else:
-        st.sidebar.success(f"✅ {t.get('retrain_complete', 'Retrain complete! Models updated.')} Reload page to apply.")
+        st.sidebar.success(f"{t.get('retrain_complete', 'Retrain complete! Models updated.')} Reload page to apply.")
 
     st.sidebar.progress(min(pct, 100) / 100)
 
-    with st.sidebar.expander(t.get("retrain_log_label", "📋 Live Training Log"), expanded=st.session_state.retrain_running):
+    with st.sidebar.expander(t.get("retrain_log_label", "Live Training Log"), expanded=st.session_state.retrain_running):
         log_text = "\n".join(st.session_state.retrain_logs[-60:])  # last 60 lines
         st.code(log_text or "(waiting for output...)", language=None)
 
@@ -808,7 +818,7 @@ for idx, j_name in enumerate(junction_names):
     # Road closure override
     if incident_junction == j_name:
         spd = 4.0
-        cause = "🚨 FULL ROAD CLOSURE: Active incident / water blockage reported!"
+        cause = "FULL ROAD CLOSURE: Active incident / water blockage reported!"
     else:
         cause = "Normal commuter flow"
         if rain_input > 20:
@@ -847,9 +857,9 @@ st.markdown(f"""
   </p>
   <div class="hero-pills">
     <div class="hero-pill"><strong>{chosen_model_label.split("(")[0].strip()}</strong>&nbsp;active</div>
-    <div class="hero-pill">⏱&nbsp;<strong>+{horizon_min} min</strong>&nbsp;horizon</div>
-    <div class="hero-pill">📍&nbsp;<strong>20</strong>&nbsp;junctions monitored</div>
-    <div class="hero-pill">📊&nbsp;<strong>4.41% MAPE</strong>&nbsp;accuracy</div>
+    <div class="hero-pill">+{horizon_min} min horizon</div>
+    <div class="hero-pill">20 junctions monitored</div>
+    <div class="hero-pill">4.41% MAPE accuracy</div>
   </div>
 </div>
 """, unsafe_allow_html=True)
@@ -858,7 +868,7 @@ st.markdown(f"""
 st.markdown(f"""
 <div class="kpi-strip">
   <div class="kpi-card">
-    <div class="kpi-icon {'r' if n_alerts > 0 else 'g'}">{'🚨' if n_alerts > 0 else '✅'}</div>
+    <div class="kpi-icon {'r' if n_alerts > 0 else 'g'}">{'ALT' if n_alerts > 0 else 'OK'}</div>
     <div>
       <div class="kpi-label">Active Alerts</div>
       <div class="kpi-value">{n_alerts}</div>
@@ -866,7 +876,7 @@ st.markdown(f"""
     </div>
   </div>
   <div class="kpi-card">
-    <div class="kpi-icon b">⚡</div>
+    <div class="kpi-icon b">SPD</div>
     <div>
       <div class="kpi-label">Avg. Network Speed</div>
       <div class="kpi-value">{avg_speed:.1f} <span style="font-size:13px;color:#A09890">km/h</span></div>
@@ -874,15 +884,15 @@ st.markdown(f"""
     </div>
   </div>
   <div class="kpi-card">
-    <div class="kpi-icon {'r' if avg_cap >= 70 else 'a' if avg_cap >= 50 else 'g'}">🛣️</div>
+    <div class="kpi-icon {'r' if avg_cap >= 70 else 'a' if avg_cap >= 50 else 'g'}">CAP</div>
     <div>
       <div class="kpi-label">Avg. Capacity Used</div>
       <div class="kpi-value">{avg_cap:.0f}<span style="font-size:13px;color:#A09890">%</span></div>
-      <div class="kpi-sub">{'⚠ congested' if avg_cap >= 70 else '↗ moderate' if avg_cap >= 50 else '↓ clear'}</div>
+      <div class="kpi-sub">{'congested' if avg_cap >= 70 else 'moderate' if avg_cap >= 50 else 'clear'}</div>
     </div>
   </div>
   <div class="kpi-card">
-    <div class="kpi-icon a">🌧️</div>
+    <div class="kpi-icon a">RAIN</div>
     <div>
       <div class="kpi-label">Rain Intensity</div>
       <div class="kpi-value">{rain_input:.0f} <span style="font-size:13px;color:#A09890">mm/hr</span></div>
@@ -890,7 +900,7 @@ st.markdown(f"""
     </div>
   </div>
   <div class="kpi-card">
-    <div class="kpi-icon s">🎉</div>
+    <div class="kpi-icon s">FEST</div>
     <div>
       <div class="kpi-label">Festival Mode</div>
       <div class="kpi-value" style="font-size:14px;margin-top:4px">{festival_mode.split("(")[0].strip()}</div>
@@ -904,10 +914,8 @@ st.markdown(f"""
 if alerts:
     alert_html = ""
     for a_name, a_cap, a_spd, a_cause in alerts:
-        severity = "🔴" if a_cap >= 90 else "🟠"
         alert_html += f"""
         <div class="alert-card">
-          <div class="alert-icon">{severity}</div>
           <div class="alert-body">
             <div class="alert-title">{a_name.replace("_"," ")} — {a_cap:.0f}% capacity reached</div>
             <div class="alert-detail">
@@ -920,29 +928,29 @@ if alerts:
     st.markdown(alert_html, unsafe_allow_html=True)
 else:
     st.markdown(
-        '<div class="all-clear">✅ &nbsp;All 20 arterial corridors are operating below the 80% congestion threshold.</div>',
+        '<div class="all-clear">All 20 arterial corridors are operating below the 80% congestion threshold.</div>',
         unsafe_allow_html=True,
     )
 
 # ----------------- 5 INTERACTIVE TABS -----------------
 tab_map, tab_bench, tab_timeseries, tab_stress, tab_xai = st.tabs([
-    f"🗺️ {t.get('tab_map', 'Corridor Map & Alerts')}",
-    f"📊 {t.get('tab_bench', 'Model Benchmarks & Comparison')}",
-    f"📈 {t.get('tab_timeseries', 'Time Series & Diurnal Cycles')}",
-    f"🌧️ {t.get('tab_stress', 'Stress Testing & Robustness')}",
-    f"🔍 {t.get('tab_xai', 'Explainable AI (XAI) Attribution')}",
+    f"{t.get('tab_map', 'Corridor Map & Alerts')}",
+    f"{t.get('tab_bench', 'Model Benchmarks & Comparison')}",
+    f"{t.get('tab_timeseries', 'Time Series & Diurnal Cycles')}",
+    f"{t.get('tab_stress', 'Stress Testing & Robustness')}",
+    f"{t.get('tab_xai', 'Explainable AI (XAI) Attribution')}",
 ])
 
 # ----------------- TAB 1: CORRIDOR MAP -----------------
 with tab_map:
     col_map, col_kpi = st.columns([7, 5])
     with col_map:
-        st.subheader(f"🗺️ {t.get('city_map_title', 'Interactive City Map')} (+{horizon_min} min {t.get('forecast_horizon', 'Forecast')})")
+        st.subheader(f"{t.get('city_map_title', 'Interactive City Map')} (+{horizon_min} min {t.get('forecast_horizon', 'Forecast')})")
         folium_map = build_traffic_folium_map(junction_preds)
         components.html(folium_map._repr_html_(), height=520)
 
     with col_kpi:
-        st.subheader(f"📍 {t.get('key_kpis_title', 'Key Arterial Junction KPIs')}")
+        st.subheader(f"{t.get('key_kpis_title', 'Key Arterial Junction KPIs')}")
         kpi_cols = st.columns(2)
         spotlight_junctions = ["Kathipara", "Guindy", "T_Nagar_Panagal", "Central_Station", "Perungudi_OMR", "Koyambedu"]
         for i, jn in enumerate(spotlight_junctions):
@@ -959,7 +967,7 @@ with tab_map:
         st.markdown("---")
         st.caption(t.get('legend_text', 'Green: <50% Capacity (Free Flow) | Amber: 50-79% (Slowdown) | Red: >=80% (Severe Congestion)'))
 
-    st.subheader(f"📊 {t.get('severity_all_title', 'Congestion Severity Across All 20 Metropolitan Junctions')}")
+    st.subheader(f"{t.get('severity_all_title', 'Congestion Severity Across All 20 Metropolitan Junctions')}")
     df_junc = pd.DataFrame([
         {
             "Junction": j.replace("_", " "),
@@ -974,14 +982,14 @@ with tab_map:
 
 # ----------------- TAB 2: MODEL COMPARISON & BENCHMARKS -----------------
 with tab_bench:
-    st.subheader(f"📊 {t.get('benchmarks_title', 'Comprehensive Model Benchmark Comparison (Held-out Test Split)')}")
+    st.subheader(f"{t.get('benchmarks_title', 'Comprehensive Model Benchmark Comparison (Held-out Test Split)')}")
     st.markdown(t.get('benchmarks_desc', 'All models were retrained and evaluated on the same 26,718-record Chennai Google Sheets traffic log using an NVIDIA RTX 3050 GPU.'))
 
     benchmark_data = [
-        {"Model": "🧠 TrafficPulse Meta-Ensemble", "Category": "Bayesian Stacking Mixture", "15m MAE": 0.884, "15m MAPE": "4.41%", "30m MAE": 1.112, "60m MAE": 1.295, "Params": "3.1M combined", "Retrained Checkpoint": "All 7 Models Combined"},
+        {"Model": "TrafficPulse Meta-Ensemble", "Category": "Bayesian Stacking Mixture", "15m MAE": 0.884, "15m MAPE": "4.41%", "30m MAE": 1.112, "60m MAE": 1.295, "Params": "3.1M combined", "Retrained Checkpoint": "All 7 Models Combined"},
         {"Model": "Persistence (Last Value)", "Category": "Statistical Baseline", "15m MAE": 0.513, "15m MAPE": "2.71%", "30m MAE": 0.926, "60m MAE": 1.492, "Params": "0", "Retrained Checkpoint": "N/A"},
         {"Model": "ARIMA (Node-wise)", "Category": "Time Series Statistical", "15m MAE": 0.513, "15m MAPE": "2.71%", "30m MAE": 0.927, "60m MAE": 1.493, "Params": "20 models", "Retrained Checkpoint": "N/A"},
-        {"Model": "Graph WaveNet ⭐", "Category": "Spatial-Temporal GNN", "15m MAE": 0.929, "15m MAPE": "4.70%", "30m MAE": 1.203, "60m MAE": 1.609, "Params": "312,480", "Retrained Checkpoint": "retrained_gwnet_latest.pt"},
+        {"Model": "Graph WaveNet", "Category": "Spatial-Temporal GNN", "15m MAE": 0.929, "15m MAPE": "4.70%", "30m MAE": 1.203, "60m MAE": 1.609, "Params": "312,480", "Retrained Checkpoint": "retrained_gwnet_latest.pt"},
         {"Model": "AGCRN", "Category": "Adaptive Graph Recurrent", "15m MAE": 0.951, "15m MAPE": "5.17%", "30m MAE": 1.156, "60m MAE": 1.448, "Params": "748,800", "Retrained Checkpoint": "retrained_agcrn_latest.pt"},
         {"Model": "India-Aware Proposed", "Category": "Heterogeneous Multimodal GNN", "15m MAE": 1.231, "15m MAPE": "6.59%", "30m MAE": 1.233, "60m MAE": 1.304, "Params": "1,142,500", "Retrained Checkpoint": "retrained_india_aware_latest.pt"},
         {"Model": "LSTM Baseline", "Category": "Recurrent (Graph-Unaware)", "15m MAE": 1.227, "15m MAPE": "6.60%", "30m MAE": 1.235, "60m MAE": 1.283, "Params": "118,272", "Retrained Checkpoint": "retrained_lstm_latest.pt"},
@@ -994,7 +1002,7 @@ with tab_bench:
 
     col_b1, col_b2 = st.columns([6, 6])
     with col_b1:
-        st.subheader(f"📉 {t.get('chart_error_title', 'Forecasting Error (MAE in km/h) by Horizon')}")
+        st.subheader(f"{t.get('chart_error_title', 'Forecasting Error (MAE in km/h) by Horizon')}")
         chart_df = pd.DataFrame({
             "Meta-Ensemble": [0.884, 1.112, 1.295],
             "Graph WaveNet": [0.929, 1.203, 1.609],
@@ -1007,7 +1015,7 @@ with tab_bench:
         st.line_chart(chart_df)
 
     with col_b2:
-        st.subheader(f"📈 {t.get('chart_loss_title', 'Neural Training Loss Convergence')}")
+        st.subheader(f"{t.get('chart_loss_title', 'Neural Training Loss Convergence')}")
         epochs_x = np.arange(1, 26)
         train_loss = 0.045 * np.exp(-epochs_x / 5.0) + 0.013 + np.random.normal(0, 0.0003, size=len(epochs_x))
         val_loss = 0.052 * np.exp(-epochs_x / 5.5) + 0.015 + np.random.normal(0, 0.0004, size=len(epochs_x))
@@ -1015,7 +1023,7 @@ with tab_bench:
         st.line_chart(loss_df)
 
     st.markdown("---")
-    st.subheader(f"🎯 {t.get('consensus_title', 'Multi-Model Real-Time Consensus Explorer')}")
+    st.subheader(f"{t.get('consensus_title', 'Multi-Model Real-Time Consensus Explorer')}")
     st.caption(t.get('consensus_desc', 'Compare how all individual neural architectures predict speed for any corridor under active simulation:'))
 
     sel_consensus_junc = st.selectbox(t.get('consensus_select', 'Select Junction to inspect all individual model predictions:'), junction_names, index=0)
@@ -1031,7 +1039,7 @@ with tab_bench:
             "Adaptive Graph": float(individual_model_preds.get("graph", raw_speeds)[step_idx, c_idx]),
             "STGCN": float(individual_model_preds.get("stgcn", raw_speeds)[step_idx, c_idx]),
             "DCRNN": float(individual_model_preds.get("dcrnn", raw_speeds)[step_idx, c_idx]),
-            "⭐ ENSEMBLE CONSENSUS": float(raw_speeds[step_idx, c_idx]),
+            "ENSEMBLE CONSENSUS": float(raw_speeds[step_idx, c_idx]),
         }
         st.bar_chart(pd.Series(model_comp_dict))
 
@@ -1040,12 +1048,12 @@ with tab_bench:
         agree_pct = max(0.0, min(100.0, (1.0 - (c_std / (c_mean + 1e-5))) * 100.0))
         st.info(f"**{t.get('consensus_speed_label', 'Ensemble Consensus Speed')}:** `{c_mean:.1f} km/h` | **{t.get('std_label', 'Inter-Model Standard Deviation')}:** `±{c_std:.2f} km/h` | **{t.get('agreement_label', 'Inter-Model Agreement Confidence')}:** `{agree_pct:.1f}%`")
     else:
-        st.write("Switch to '🧠 Multi-Model Meta-Ensemble' in the sidebar to view live model-by-model comparisons.")
+        st.write("Switch to 'Multi-Model Meta-Ensemble' in the sidebar to view live model-by-model comparisons.")
 
 
 # ----------------- TAB 3: TIME SERIES & DIURNAL PATTERNS -----------------
 with tab_timeseries:
-    st.subheader(f"📈 {t.get('diurnal_title', '24-Hour Diurnal Traffic Velocity Patterns (Chennai Metro)')}")
+    st.subheader(f"{t.get('diurnal_title', '24-Hour Diurnal Traffic Velocity Patterns (Chennai Metro)')}")
     st.caption(t.get('diurnal_desc', 'Visualizing typical weekday congestion cycles across peak commuter windows:'))
 
     hours = [f"{h:02d}:00" for h in range(24)]
@@ -1063,7 +1071,7 @@ with tab_timeseries:
     }, index=hours)
     st.line_chart(diurnal_df)
 
-    st.subheader(f"⏱️ {t.get('trajectory_title', 'Multi-Step Horizon Forecast Trajectory with 95% Confidence Band')}")
+    st.subheader(f"{t.get('trajectory_title', 'Multi-Step Horizon Forecast Trajectory with 95% Confidence Band')}")
     sel_junction = st.selectbox(t.get('trajectory_select', 'Inspect Junction Forecast Trajectory'), junction_names, index=0)
     j_idx = junction_names.index(sel_junction)
     timesteps = [f"+{m}m" for m in range(5, 65, 5)]
@@ -1084,11 +1092,11 @@ with tab_timeseries:
 
 # ----------------- TAB 4: STRESS TESTING & ROBUSTNESS -----------------
 with tab_stress:
-    st.subheader(f"🌧️ {t.get('stress_title', 'Robustness Under Extreme Conditions & Sensor Dropouts')}")
+    st.subheader(f"{t.get('stress_title', 'Robustness Under Extreme Conditions & Sensor Dropouts')}")
     col_s1, col_s2 = st.columns([6, 6])
 
     with col_s1:
-        st.subheader(f"📡 {t.get('dropout_title', 'Sensor Dropout Resilience Curve')}")
+        st.subheader(f"{t.get('dropout_title', 'Sensor Dropout Resilience Curve')}")
         st.caption(t.get('dropout_desc', 'Evaluating model tolerance when ITMS detectors or cameras experience network outages:'))
         dropout_levels = ["100%", "90%", "80%", "70%", "60%", "50%", "40%", "30%"]
         dropout_mae = [1.231, 1.281, 1.355, 1.455, 1.580, 1.762, 1.980, 2.217]
@@ -1098,20 +1106,20 @@ with tab_stress:
             "Standard Baseline (without Graph Imputation)": baseline_dropout,
         }, index=dropout_levels)
         st.line_chart(drop_df)
-        st.caption(f"💡 {t.get('dropout_insight', 'The Sparse Sensor Imputer keeps error under 1.76 km/h even when 50% of city sensors drop offline.')}")
+        st.caption(f"{t.get('dropout_insight', 'The Sparse Sensor Imputer keeps error under 1.76 km/h even when 50% of city sensors drop offline.')}")
 
     with col_s2:
-        st.subheader(f"⛈️ {t.get('monsoon_curve_title', 'Monsoon Precipitation Degradation Curve')}")
+        st.subheader(f"{t.get('monsoon_curve_title', 'Monsoon Precipitation Degradation Curve')}")
         rain_range = np.linspace(0, 60, 20)
         speed_impact = [35.0 * (1.0 - 0.35 * (1.0 - np.exp(-r / 15.0))) for r in rain_range]
         rain_df = pd.DataFrame({"Effective Speed (km/h)": speed_impact}, index=[f"{int(r)} mm/h" for r in rain_range])
         st.line_chart(rain_df)
-        st.caption(f"💡 {t.get('monsoon_curve_insight', 'Tropical rainfall above 25 mm/hr triggers severe brake latency and lane narrowing, reducing speed by ~35%.')}")
+        st.caption(f"{t.get('monsoon_curve_insight', 'Tropical rainfall above 25 mm/hr triggers severe brake latency and lane narrowing, reducing speed by ~35%.')}")
 
 
 # ----------------- TAB 5: EXPLAINABLE AI (XAI) & FACTOR ATTRIBUTION -----------------
 with tab_xai:
-    st.subheader(f"🔍 {t.get('xai_title', 'Explainable AI (XAI) — Root Cause & Factor Attribution')}")
+    st.subheader(f"{t.get('xai_title', 'Explainable AI (XAI) — Root Cause & Factor Attribution')}")
     st.markdown(t.get('xai_desc', 'Using Gradient Saliency & GNNExplainer, the model explains why a specific junction is slowing down and attributes responsibility across all active environmental factors.'))
 
     xai_junction = st.selectbox(t.get('xai_select', 'Select Target Junction for XAI Deep-Dive'), junction_names, index=0)
@@ -1119,7 +1127,7 @@ with tab_xai:
 
     col_x1, col_x2 = st.columns([6, 6])
     with col_x1:
-        st.subheader(f"📋 {t.get('briefing_title', 'Control Room Operational Briefing')}")
+        st.subheader(f"{t.get('briefing_title', 'Control Room Operational Briefing')}")
         p_data = junction_preds[xai_junction]
         suggested_action = t.get('deploy_warden', 'Deploy traffic warden + extend green cycle +30s') if p_data['capacity_pct'] >= 80 else t.get('standard_timing', 'Standard automated signal timing sufficient')
         st.info(f"""
@@ -1131,7 +1139,7 @@ with tab_xai:
         """)
 
     with col_x2:
-        st.subheader(f"📊 {t.get('factor_saliency_title', 'Factor Saliency Attribution (%)')}")
+        st.subheader(f"{t.get('factor_saliency_title', 'Factor Saliency Attribution (%)')}")
         w_speed = 40.0
         w_diurnal = 25.0
         w_rain = min(35.0, rain_input * 0.6)
