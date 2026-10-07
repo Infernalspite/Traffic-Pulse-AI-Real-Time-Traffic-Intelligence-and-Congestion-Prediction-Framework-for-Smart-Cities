@@ -392,6 +392,9 @@ table {
     border: 1px solid #EAE6DD !important;
     border-radius: 10px !important;
     overflow: hidden !important;
+    table-layout: auto !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
 }
 
 th {
@@ -401,16 +404,19 @@ th {
     font-weight: 700 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.05em !important;
-    padding: 10px 14px !important;
+    padding: 10px 12px !important;
     border-bottom: 1px solid #EAE6DD !important;
+    white-space: normal !important;
 }
 
 td {
     background-color: #FFFFFF !important;
     color: #1C1C1A !important;
-    padding: 10px 14px !important;
+    padding: 10px 12px !important;
     border-bottom: 1px solid #F0ECE4 !important;
-    font-size: 13px !important;
+    font-size: 12px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
 }
 
 /* ── EXPANDERS ── */
@@ -1015,16 +1021,16 @@ with tab_bench:
     st.markdown(t.get('benchmarks_desc', 'All models were retrained and evaluated on the same 26,718-record Chennai Google Sheets traffic log using an NVIDIA RTX 3050 GPU.'))
 
     benchmark_data = [
-        {"Model": "TrafficPulse Meta-Ensemble", "Category": "Bayesian Stacking Mixture", "15m MAE": 0.884, "15m MAPE": "4.41%", "30m MAE": 1.112, "60m MAE": 1.295, "Params": "3.1M combined", "Retrained Checkpoint": "All 7 Models Combined"},
-        {"Model": "Persistence (Last Value)", "Category": "Statistical Baseline", "15m MAE": 0.513, "15m MAPE": "2.71%", "30m MAE": 0.926, "60m MAE": 1.492, "Params": "0", "Retrained Checkpoint": "N/A"},
-        {"Model": "ARIMA (Node-wise)", "Category": "Time Series Statistical", "15m MAE": 0.513, "15m MAPE": "2.71%", "30m MAE": 0.927, "60m MAE": 1.493, "Params": "20 models", "Retrained Checkpoint": "N/A"},
-        {"Model": "Graph WaveNet", "Category": "Spatial-Temporal GNN", "15m MAE": 0.929, "15m MAPE": "4.70%", "30m MAE": 1.203, "60m MAE": 1.609, "Params": "312,480", "Retrained Checkpoint": "retrained_gwnet_latest.pt"},
-        {"Model": "AGCRN", "Category": "Adaptive Graph Recurrent", "15m MAE": 0.951, "15m MAPE": "5.17%", "30m MAE": 1.156, "60m MAE": 1.448, "Params": "748,800", "Retrained Checkpoint": "retrained_agcrn_latest.pt"},
-        {"Model": "India-Aware Proposed", "Category": "Heterogeneous Multimodal GNN", "15m MAE": 1.231, "15m MAPE": "6.59%", "30m MAE": 1.233, "60m MAE": 1.304, "Params": "1,142,500", "Retrained Checkpoint": "retrained_india_aware_latest.pt"},
-        {"Model": "LSTM Baseline", "Category": "Recurrent (Graph-Unaware)", "15m MAE": 1.227, "15m MAPE": "6.60%", "30m MAE": 1.235, "60m MAE": 1.283, "Params": "118,272", "Retrained Checkpoint": "retrained_lstm_latest.pt"},
-        {"Model": "Adaptive Graph GNN", "Category": "Graph Convolution", "15m MAE": 1.310, "15m MAPE": "6.91%", "30m MAE": 1.430, "60m MAE": 1.670, "Params": "425,600", "Retrained Checkpoint": "retrained_graph_latest.pt"},
-        {"Model": "STGCN", "Category": "Spatial-Temporal GCN", "15m MAE": 1.354, "15m MAPE": "7.14%", "30m MAE": 1.472, "60m MAE": 1.684, "Params": "283,392", "Retrained Checkpoint": "retrained_stgcn_latest.pt"},
-        {"Model": "DCRNN", "Category": "Diffusion Convolution", "15m MAE": 1.442, "15m MAPE": "7.35%", "30m MAE": 1.561, "60m MAE": 1.777, "Params": "372,480", "Retrained Checkpoint": "retrained_dcrnn_latest.pt"},
+        {"Model": "Meta-Ensemble", "Category": "Bayesian Stacking", "15m MAE": 0.884, "15m MAPE": "4.41%", "30m MAE": 1.112, "60m MAE": 1.295, "Parameters": "3.1M", "Checkpoint": "Ensemble"},
+        {"Model": "Persistence", "Category": "Baseline", "15m MAE": 0.513, "15m MAPE": "2.71%", "30m MAE": 0.926, "60m MAE": 1.492, "Parameters": "0", "Checkpoint": "N/A"},
+        {"Model": "ARIMA", "Category": "Statistical", "15m MAE": 0.513, "15m MAPE": "2.71%", "30m MAE": 0.927, "60m MAE": 1.493, "Parameters": "20 models", "Checkpoint": "N/A"},
+        {"Model": "Graph WaveNet", "Category": "Spatio-Temporal GNN", "15m MAE": 0.929, "15m MAPE": "4.70%", "30m MAE": 1.203, "60m MAE": 1.609, "Parameters": "312K", "Checkpoint": "gwnet_latest.pt"},
+        {"Model": "AGCRN", "Category": "Adaptive Recurrent GCN", "15m MAE": 0.951, "15m MAPE": "5.17%", "30m MAE": 1.156, "60m MAE": 1.448, "Parameters": "748K", "Checkpoint": "agcrn_latest.pt"},
+        {"Model": "India-Aware Proposed", "Category": "Multimodal GNN", "15m MAE": 1.231, "15m MAPE": "6.59%", "30m MAE": 1.233, "60m MAE": 1.304, "Parameters": "1.1M", "Checkpoint": "india_aware_latest.pt"},
+        {"Model": "LSTM Baseline", "Category": "Recurrent Baseline", "15m MAE": 1.227, "15m MAPE": "6.60%", "30m MAE": 1.235, "60m MAE": 1.283, "Parameters": "118K", "Checkpoint": "lstm_latest.pt"},
+        {"Model": "Adaptive Graph GNN", "Category": "Graph Convolution", "15m MAE": 1.310, "15m MAPE": "6.91%", "30m MAE": 1.430, "60m MAE": 1.670, "Parameters": "425K", "Checkpoint": "graph_latest.pt"},
+        {"Model": "STGCN", "Category": "Spatio-Temporal GCN", "15m MAE": 1.354, "15m MAPE": "7.14%", "30m MAE": 1.472, "60m MAE": 1.684, "Parameters": "283K", "Checkpoint": "stgcn_latest.pt"},
+        {"Model": "DCRNN", "Category": "Diffusion Convolution", "15m MAE": 1.442, "15m MAPE": "7.35%", "30m MAE": 1.561, "60m MAE": 1.777, "Parameters": "372K", "Checkpoint": "dcrnn_latest.pt"},
     ]
     df_bench = pd.DataFrame(benchmark_data)
     st.table(df_bench)
