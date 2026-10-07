@@ -58,6 +58,365 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# ── THEME CSS ──────────────────────────────────────────────────────────────────
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap');
+
+/* ── BASE ── */
+html, body, .stApp {
+    background-color: #F5F2EB !important;
+    font-family: 'Inter', -apple-system, sans-serif !important;
+    color: #1C1C1A !important;
+}
+
+/* ── MAIN CONTENT PADDING ── */
+.main .block-container {
+    padding-top: 0 !important;
+    padding-left: 2.5rem !important;
+    padding-right: 2.5rem !important;
+    padding-bottom: 3rem !important;
+    max-width: 1380px !important;
+}
+
+/* ── SIDEBAR ── */
+[data-testid="stSidebar"] {
+    background-color: #FFFFFF !important;
+    border-right: 1px solid #E8E3DA !important;
+}
+[data-testid="stSidebar"] > div:first-child {
+    padding-top: 1.5rem !important;
+}
+[data-testid="stSidebar"] .stMarkdown h3 {
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.10em !important;
+    text-transform: uppercase !important;
+    color: #A09890 !important;
+    margin-bottom: 10px !important;
+    margin-top: 4px !important;
+}
+[data-testid="stSidebar"] .stMarkdown p {
+    font-size: 12px !important;
+    color: #6B6860 !important;
+}
+[data-testid="stSidebar"] hr {
+    border-color: #EAE6DD !important;
+    margin: 1rem 0 !important;
+}
+
+/* ── HERO BANNER ── */
+.hero-wrap {
+    background: linear-gradient(140deg, #1A3021 0%, #233D2B 45%, #1A3021 100%);
+    margin: 0 -2.5rem 0 -2.5rem;
+    padding: 48px 52px 36px 52px;
+    position: relative;
+    overflow: hidden;
+}
+.hero-wrap::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -80px;
+    width: 380px; height: 280px;
+    background: radial-gradient(ellipse, rgba(255,255,255,0.05) 0%, transparent 65%);
+    border-radius: 50%;
+}
+.hero-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: -50px; left: 30%;
+    width: 500px; height: 200px;
+    background: radial-gradient(ellipse, rgba(160,220,160,0.06) 0%, transparent 70%);
+    border-radius: 50%;
+}
+.hero-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 100px;
+    padding: 4px 13px;
+    font-size: 10px; font-weight: 700;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 0.10em; text-transform: uppercase;
+    margin-bottom: 20px;
+}
+.live-dot {
+    width: 7px; height: 7px;
+    background: #7FD99A; border-radius: 50%;
+    animation: pdot 2.2s ease-in-out infinite;
+}
+@keyframes pdot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(.8)} }
+.hero-title {
+    font-family: 'DM Serif Display', Georgia, serif !important;
+    font-size: 46px !important; font-weight: 400 !important;
+    color: #FFFFFF !important; line-height: 1.13 !important;
+    margin: 0 0 14px 0 !important;
+}
+.hero-sub {
+    font-size: 14px; color: rgba(255,255,255,0.58);
+    line-height: 1.65; max-width: 540px; margin: 0 0 30px 0;
+}
+.hero-pills { display: flex; gap: 10px; flex-wrap: wrap; }
+.hero-pill {
+    background: rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 100px; padding: 6px 14px;
+    font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.80);
+    display: flex; align-items: center; gap: 6px;
+}
+.hero-pill strong { color: #A8D9B4; font-weight: 700; }
+
+/* ── KPI STRIP ── */
+.kpi-strip {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin: 24px 0 8px 0;
+}
+.kpi-card {
+    background: #FFFFFF;
+    border: 1px solid #EAE6DD;
+    border-radius: 14px;
+    padding: 16px 20px;
+    flex: 1; min-width: 155px;
+    display: flex; align-items: flex-start; gap: 13px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.045);
+    transition: box-shadow .18s, transform .18s;
+}
+.kpi-card:hover {
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+}
+.kpi-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; flex-shrink: 0;
+}
+.kpi-icon.g { background: #E6F4EC; }
+.kpi-icon.a { background: #FDF2E3; }
+.kpi-icon.r { background: #FDE8E8; }
+.kpi-icon.b { background: #E8F0FD; }
+.kpi-icon.s { background: #EEEDF2; }
+.kpi-label {
+    font-size: 10px; color: #A09890; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 3px;
+}
+.kpi-value { font-size: 21px; font-weight: 700; color: #1C1C1A; line-height: 1.15; }
+.kpi-sub { font-size: 11px; color: #B0A898; margin-top: 2px; }
+
+/* ── ALERT CARDS ── */
+.alert-card {
+    background: #FEF3F3;
+    border: 1px solid #F5C6C6;
+    border-left: 4px solid #D94040;
+    border-radius: 10px;
+    padding: 13px 18px; margin-bottom: 10px;
+    display: flex; align-items: flex-start; gap: 12px;
+}
+.alert-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+.alert-title { font-size: 13px; font-weight: 700; color: #1C1C1A; margin-bottom: 2px; }
+.alert-detail { font-size: 12px; color: #7A6E6E; line-height: 1.55; }
+.all-clear {
+    background: #F0FAF4;
+    border: 1px solid #C3E8D1;
+    border-left: 4px solid #2D9E5E;
+    border-radius: 10px;
+    padding: 12px 18px; margin-bottom: 16px;
+    font-size: 13px; color: #1C4A2F; font-weight: 500;
+    display: flex; align-items: center; gap: 8px;
+}
+
+/* ── SECTION HEADERS ── */
+.section-header {
+    font-size: 17px; font-weight: 700; color: #1C1C1A;
+    margin: 24px 0 4px 0;
+}
+.section-caption {
+    font-size: 12px; color: #8B8680; margin-bottom: 16px;
+}
+
+/* ── TABS ── */
+.stTabs [data-baseweb="tab-list"] {
+    background: transparent !important;
+    border-bottom: 1.5px solid #E4DFD6 !important;
+    gap: 2px !important;
+    padding: 0 !important;
+}
+.stTabs [data-baseweb="tab"] {
+    background: transparent !important;
+    border-radius: 0 !important;
+    border-bottom: 2.5px solid transparent !important;
+    padding: 10px 20px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #9A948A !important;
+    margin-bottom: -1.5px !important;
+    transition: color .15s !important;
+}
+.stTabs [aria-selected="true"] {
+    color: #1A3021 !important;
+    border-bottom-color: #1A3021 !important;
+    font-weight: 600 !important;
+}
+.stTabs [data-baseweb="tab-panel"] {
+    padding-top: 24px !important;
+    background: transparent !important;
+}
+
+/* ── BUTTONS ── */
+.stButton > button {
+    border-radius: 100px !important;
+    font-size: 13px !important; font-weight: 600 !important;
+    padding: 9px 22px !important;
+    border: 1.5px solid #1A3021 !important;
+    background: #1A3021 !important;
+    color: #FFFFFF !important;
+    transition: all .2s !important;
+    letter-spacing: 0.02em !important;
+    box-shadow: 0 1px 3px rgba(26,48,33,.15) !important;
+}
+.stButton > button:hover {
+    background: #233D2B !important;
+    box-shadow: 0 5px 14px rgba(26,48,33,.28) !important;
+    transform: translateY(-1px) !important;
+}
+.stButton > button[kind="secondary"] {
+    background: transparent !important;
+    color: #1A3021 !important;
+}
+
+/* ── METRICS ── */
+[data-testid="stMetric"] {
+    background: #FFFFFF !important;
+    border: 1px solid #EAE6DD !important;
+    border-radius: 12px !important;
+    padding: 16px 18px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04) !important;
+}
+[data-testid="stMetricLabel"] > div {
+    font-size: 10px !important; font-weight: 700 !important;
+    color: #A09890 !important;
+    text-transform: uppercase !important; letter-spacing: 0.07em !important;
+}
+[data-testid="stMetricValue"] > div {
+    font-size: 22px !important; font-weight: 700 !important; color: #1C1C1A !important;
+}
+
+/* ── INPUTS / SELECTS ── */
+[data-testid="stSelectbox"] > div > div,
+[data-testid="stMultiSelect"] > div > div {
+    background: #FFFFFF !important;
+    border: 1px solid #DDD8CF !important;
+    border-radius: 8px !important;
+}
+[data-testid="stNumberInput"] > div > div > input {
+    background: #FFFFFF !important;
+    border-radius: 8px !important;
+}
+
+/* ── SLIDER ── */
+[data-testid="stSlider"] [role="slider"] {
+    background: #1A3021 !important;
+    border-color: #1A3021 !important;
+}
+[data-testid="stSlider"] [data-baseweb="slider"] div[class*="track"] {
+    background: #1A3021 !important;
+}
+
+/* ── DATAFRAME ── */
+[data-testid="stDataFrame"] {
+    border: 1px solid #EAE6DD !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,.04) !important;
+}
+[data-testid="stDataFrame"] thead th {
+    background: #F7F4EF !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+    color: #8B8680 !important;
+}
+
+/* ── EXPANDERS ── */
+[data-testid="stExpander"] {
+    border: 1px solid #EAE6DD !important;
+    border-radius: 12px !important;
+    background: #FFFFFF !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04) !important;
+}
+[data-testid="stExpander"] summary {
+    font-size: 13px !important; font-weight: 600 !important; color: #1C1C1A !important;
+}
+
+/* ── PROGRESS ── */
+[data-testid="stProgress"] > div {
+    background: #EAE6DD !important;
+    border-radius: 100px !important;
+    height: 6px !important;
+}
+[data-testid="stProgress"] > div > div {
+    background: linear-gradient(90deg, #1A3021, #3A7D52) !important;
+    border-radius: 100px !important;
+}
+
+/* ── INFO / SUCCESS / WARNING ── */
+[data-testid="stAlert"][kind="info"],
+div[class*="stInfo"] {
+    background: #F0F6FF !important;
+    border-radius: 10px !important;
+    border-color: #C3D8F5 !important;
+}
+[data-testid="stAlert"][kind="success"],
+div[class*="stSuccess"] {
+    background: #F0FAF4 !important;
+    border-radius: 10px !important;
+}
+[data-testid="stAlert"][kind="warning"],
+div[class*="stWarning"] {
+    background: #FFFBF0 !important;
+    border-radius: 10px !important;
+}
+
+/* ── CODE BLOCK (log viewer) ── */
+[data-testid="stCode"] {
+    background: #F7F4EF !important;
+    border: 1px solid #E4DFD6 !important;
+    border-radius: 10px !important;
+    font-size: 11px !important;
+}
+
+/* ── CHECKBOXES ── */
+[data-testid="stCheckbox"] label span {
+    font-size: 12px !important;
+}
+
+/* ── HIDE DEFAULT STREAMLIT BRANDING ── */
+#MainMenu, footer, header { visibility: hidden !important; }
+
+/* ── DIVIDER ── */
+hr { border-color: #E8E3DA !important; margin: 1.2rem 0 !important; }
+
+/* ── CHART CONTAINERS ── */
+[data-testid="stArrowVegaLiteChart"],
+[data-testid="stVegaLiteChart"] {
+    background: #FFFFFF !important;
+    border: 1px solid #EAE6DD !important;
+    border-radius: 12px !important;
+    padding: 12px !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,.04) !important;
+}
+
+/* ── BAR / LINE CHARTS ── */
+[data-testid="stMetricDeltaIcon"] { font-size: 11px !important; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #F5F2EB; }
+::-webkit-scrollbar-thumb { background: #D0CBC0; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #B8B2A8; }
+</style>
+""", unsafe_allow_html=True)
+
 # 1. Multilingual Support
 TRANS_DIR = ROOT_DIR / "dashboard" / "translations"
 LANGUAGES = {
@@ -426,20 +785,98 @@ for idx, j_name in enumerate(junction_names):
     if is_alert:
         alerts.append((j_name, cap, spd, cause))
 
-# ----------------- MAIN TITLE & HERO METRICS -----------------
-st.title(f"🚦 {t.get('title', 'Traffic Pulse AI — Urban Congestion Intelligence')}")
-st.caption(f"{t.get('subtitle', 'Real-time Spatio-Temporal GNN & Explainable Traffic Dashboard')} • {t.get('forecast_engine', 'Engine')}: **{chosen_model_label}** • {t.get('forecast_horizon', 'Active Horizon')}: **{horizon_min} min**")
+# ----------------- HERO BANNER -----------------
+n_alerts = len(alerts)
+n_critical = sum(1 for _, cap, _, _ in alerts if cap >= 90)
+avg_speed = float(np.mean([p["speed"] for p in junction_preds.values()]))
+avg_cap = float(np.mean([p["capacity_pct"] for p in junction_preds.values()]))
 
-# Top Alert Ribbon
+st.markdown(f"""
+<div class="hero-wrap">
+  <div class="hero-badge"><span class="live-dot"></span>&nbsp;Live Intelligence</div>
+  <h1 class="hero-title">Urban Traffic<br>Intelligence</h1>
+  <p class="hero-sub">
+    Real-time spatio-temporal GNN prediction across 20 Chennai metropolitan junctions —
+    powered by the 7-model meta-ensemble with Bayesian consensus weighting.
+  </p>
+  <div class="hero-pills">
+    <div class="hero-pill"><strong>{chosen_model_label.split("(")[0].strip()}</strong>&nbsp;active</div>
+    <div class="hero-pill">⏱&nbsp;<strong>+{horizon_min} min</strong>&nbsp;horizon</div>
+    <div class="hero-pill">📍&nbsp;<strong>20</strong>&nbsp;junctions monitored</div>
+    <div class="hero-pill">📊&nbsp;<strong>4.41% MAPE</strong>&nbsp;accuracy</div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
+# ----------------- KPI STRIP -----------------
+st.markdown(f"""
+<div class="kpi-strip">
+  <div class="kpi-card">
+    <div class="kpi-icon {'r' if n_alerts > 0 else 'g'}">{'🚨' if n_alerts > 0 else '✅'}</div>
+    <div>
+      <div class="kpi-label">Active Alerts</div>
+      <div class="kpi-value">{n_alerts}</div>
+      <div class="kpi-sub">junctions critical</div>
+    </div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-icon b">⚡</div>
+    <div>
+      <div class="kpi-label">Avg. Network Speed</div>
+      <div class="kpi-value">{avg_speed:.1f} <span style="font-size:13px;color:#A09890">km/h</span></div>
+      <div class="kpi-sub">across all corridors</div>
+    </div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-icon {'r' if avg_cap >= 70 else 'a' if avg_cap >= 50 else 'g'}">🛣️</div>
+    <div>
+      <div class="kpi-label">Avg. Capacity Used</div>
+      <div class="kpi-value">{avg_cap:.0f}<span style="font-size:13px;color:#A09890">%</span></div>
+      <div class="kpi-sub">{'⚠ congested' if avg_cap >= 70 else '↗ moderate' if avg_cap >= 50 else '↓ clear'}</div>
+    </div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-icon a">🌧️</div>
+    <div>
+      <div class="kpi-label">Rain Intensity</div>
+      <div class="kpi-value">{rain_input:.0f} <span style="font-size:13px;color:#A09890">mm/hr</span></div>
+      <div class="kpi-sub">{'heavy monsoon' if rain_input > 25 else 'moderate' if rain_input > 5 else 'dry conditions'}</div>
+    </div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-icon s">🎉</div>
+    <div>
+      <div class="kpi-label">Festival Mode</div>
+      <div class="kpi-value" style="font-size:14px;margin-top:4px">{festival_mode.split("(")[0].strip()}</div>
+      <div class="kpi-sub">calendar factor active</div>
+    </div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
+# ----------------- ALERT RIBBON -----------------
 if alerts:
+    alert_html = ""
     for a_name, a_cap, a_spd, a_cause in alerts:
-        st.error(
-            f"🚨 **{t.get('priority_alert', 'HIGH PRIORITY ALERT:')}** **{a_name.replace('_', ' ')}** {t.get('reached_capacity', 'reached capacity')} **{a_cap:.0f}%** "
-            f"({t.get('col_pred_speed', 'forecasted speed')}: **{a_spd:.1f} km/h** at +{horizon_min}m). **{t.get('primary_cause', 'Cause')}:** {a_cause}. "
-            f"*{t.get('action_recommendation', 'Action: Trigger adaptive traffic signal green-split.')}*"
-        )
+        severity = "🔴" if a_cap >= 90 else "🟠"
+        alert_html += f"""
+        <div class="alert-card">
+          <div class="alert-icon">{severity}</div>
+          <div class="alert-body">
+            <div class="alert-title">{a_name.replace("_"," ")} — {a_cap:.0f}% capacity reached</div>
+            <div class="alert-detail">
+              Forecasted speed: <strong>{a_spd:.1f} km/h</strong> at +{horizon_min} min &nbsp;·&nbsp;
+              {a_cause} &nbsp;·&nbsp;
+              <em>Action: Trigger adaptive green-split extension.</em>
+            </div>
+          </div>
+        </div>"""
+    st.markdown(alert_html, unsafe_allow_html=True)
 else:
-    st.success(f"🟢 {t.get('corridor_healthy', 'All 20 arterial corridors operating below the 80% congestion threshold.')}")
+    st.markdown(
+        '<div class="all-clear">✅ &nbsp;All 20 arterial corridors are operating below the 80% congestion threshold.</div>',
+        unsafe_allow_html=True,
+    )
 
 # ----------------- 5 INTERACTIVE TABS -----------------
 tab_map, tab_bench, tab_timeseries, tab_stress, tab_xai = st.tabs([
