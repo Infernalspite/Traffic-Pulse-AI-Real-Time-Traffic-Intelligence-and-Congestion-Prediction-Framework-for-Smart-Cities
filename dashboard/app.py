@@ -484,6 +484,16 @@ hr { border-color: #E8E3DA !important; margin: 1.2rem 0 !important; }
     box-shadow: 0 1px 4px rgba(0,0,0,.04) !important;
 }
 
+/* ── FLEX COLUMN & CARD ALIGNMENT ── */
+[data-testid="stColumn"] {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+}
+[data-testid="stColumn"] > div {
+    width: 100% !important;
+}
+
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: #F5F2EB; }
@@ -1021,7 +1031,7 @@ with tab_bench:
 
     col_b1, col_b2 = st.columns([6, 6])
     with col_b1:
-        st.subheader(f"{t.get('chart_error_title', 'Forecasting Error (MAE in km/h) by Horizon')}")
+        st.subheader(f"{t.get('chart_error_title', 'Forecast Error by Horizon (MAE)')}")
         chart_df = pd.DataFrame({
             "Meta-Ensemble": [0.884, 1.112, 1.295],
             "Graph WaveNet": [0.929, 1.203, 1.609],
@@ -1134,6 +1144,7 @@ with tab_stress:
         rain_df = pd.DataFrame({"Effective Speed (km/h)": speed_impact}, index=[f"{int(r)} mm/h" for r in rain_range])
         st.line_chart(rain_df)
         st.caption(f"{t.get('monsoon_curve_insight', 'Tropical rainfall above 25 mm/hr triggers severe brake latency and lane narrowing, reducing speed by ~35%.')}")
+
 
 
 # ----------------- TAB 5: EXPLAINABLE AI (XAI) & FACTOR ATTRIBUTION -----------------
