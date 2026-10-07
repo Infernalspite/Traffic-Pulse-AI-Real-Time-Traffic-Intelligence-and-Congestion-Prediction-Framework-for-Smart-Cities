@@ -352,7 +352,7 @@ html, body, .stApp {
     border-radius: 8px !important;
 }
 
-/* ── SLIDER ── */
+/* ── SLIDER & CONTROLS (UNIFORM TRAFFIC EMERALD THEME) ── */
 [data-testid="stSlider"] [role="slider"] {
     background: #1A3021 !important;
     border-color: #1A3021 !important;
@@ -364,34 +364,53 @@ html, body, .stApp {
     color: #1C1C1A !important;
 }
 
+/* ── MULTISELECT TAGS & BADGES ── */
+[data-baseweb="tag"] {
+    background-color: #E6F4EC !important;
+    border: 1px solid #A8D9B4 !important;
+    border-radius: 100px !important;
+}
+[data-baseweb="tag"] * {
+    color: #1A3021 !important;
+    font-weight: 600 !important;
+}
+
 /* ── DATAFRAME & TABLE LIGHT THEME OVERRIDES ── */
 [data-testid="stDataFrame"], .stDataFrame {
     border: 1px solid #EAE6DD !important;
     border-radius: 12px !important;
     overflow: hidden !important;
     box-shadow: 0 1px 4px rgba(0,0,0,.04) !important;
-    background: #FFFFFF !important;
+    background-color: #FFFFFF !important;
 }
 
-[data-testid="stDataFrame"] *, .stDataFrame * {
+table {
+    width: 100% !important;
+    border-collapse: collapse !important;
     background-color: #FFFFFF !important;
     color: #1C1C1A !important;
+    border: 1px solid #EAE6DD !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
 }
 
-[data-testid="stDataFrame"] thead th, [data-testid="stDataFrame"] thead th *,
-.stDataFrame thead th {
-    background: #F7F4EF !important;
+th {
+    background-color: #F7F4EF !important;
+    color: #5A564E !important;
     font-size: 11px !important;
     font-weight: 700 !important;
-    letter-spacing: 0.05em !important;
     text-transform: uppercase !important;
-    color: #5A564E !important;
+    letter-spacing: 0.05em !important;
+    padding: 10px 14px !important;
+    border-bottom: 1px solid #EAE6DD !important;
 }
 
-table, th, td {
+td {
     background-color: #FFFFFF !important;
     color: #1C1C1A !important;
-    border-color: #EAE6DD !important;
+    padding: 10px 14px !important;
+    border-bottom: 1px solid #F0ECE4 !important;
+    font-size: 13px !important;
 }
 
 /* ── EXPANDERS ── */
@@ -998,7 +1017,7 @@ with tab_bench:
         {"Model": "DCRNN", "Category": "Diffusion Convolution", "15m MAE": 1.442, "15m MAPE": "7.35%", "30m MAE": 1.561, "60m MAE": 1.777, "Params": "372,480", "Retrained Checkpoint": "retrained_dcrnn_latest.pt"},
     ]
     df_bench = pd.DataFrame(benchmark_data)
-    st.dataframe(df_bench, use_container_width=True, hide_index=True)
+    st.table(df_bench)
 
     col_b1, col_b2 = st.columns([6, 6])
     with col_b1:
